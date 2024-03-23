@@ -1,8 +1,7 @@
-from kivymd.app import MDApp
-import re
+from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 from kivy.core.window import Window
-
+import re
 
 def validate_phone_number(phone_number):
     # Паттерн для проверки на корректность российского мобильного номера
@@ -14,36 +13,17 @@ def validate_phone_number(phone_number):
     else:
         return False
 
-
-kv = '''
-#:import KivyLexer kivy.extras.highlight.KivyLexer
-#:import HotReloadViewer kivymd.utils.hot_reload_viewer.HotReloadViewer
-
-BoxLayout:
-
-    # CodeInput:
-    #     lexer: KivyLexer()
-    #     style_name: "native"
-    #     on_text: app.update_kv_file(self.text)
-    #     size_hint_x: .7
-
-    HotReloadViewer:
-        size_hint_x: .3
-        path: app.path_to_kv_file
-        errors: True
-        errors_text_color: 1, 1, 0, 1
-        errors_background_color: app.theme_cls.bg_dark
-
-'''
-
-
-class MyApp(MDApp):
+class LoginScreen(Screen):
     path_to_kv_file = "styles/style_for_login.kv"
 
-    def build(self):
+    def on_enter(self):
         # Window.fullscreen = 'auto'
         Window.size = (1080 / 3, 2000 / 3)
-        return Builder.load_string(kv)
+        self.load_kv()
+
+    def load_kv(self):
+        with open(self.path_to_kv_file, "r") as kv_file:
+            Builder.load_string(kv_file.read())
 
     def submit_data(self, phone_number, password):
         #if validate_phone_number(phone_number):
@@ -53,12 +33,3 @@ class MyApp(MDApp):
         # Вставьте здесь код для обработки введенных данных
         #else:
         #    print("Invalid phone number. Please enter a valid Russian mobile phone number.")
-
-    def update_kv_file(self, text):
-        with open(self.path_to_kv_file, "w") as kv_file:
-            kv_file.write(text)
-
-
-#if __name__ == '__main__':
-app = MyApp()
-app.run()

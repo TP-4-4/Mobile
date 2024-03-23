@@ -1,7 +1,7 @@
 from kivy.lang import Builder
 from kivy.core.window import Window
+from kivy.uix.screenmanager import Screen
 from kivy.core.image import Image as CoreImage
-from kivymd.app import MDApp
 
 kv = '''
 #:import KivyLexer kivy.extras.highlight.KivyLexer
@@ -24,7 +24,7 @@ BoxLayout:
 
 '''
 
-class MyApp(MDApp):
+class ProfileScreen(Screen):
     path_to_kv_file = "styles/style_for_pa.kv"
     last_name = 'Лобова'
     name = 'Екатерина'
@@ -36,15 +36,14 @@ class MyApp(MDApp):
     width = image.width
     height = image.height
 
-    def build(self):
-        # Window.fullscreen = 'auto'
+    def on_enter(self):
         Window.size = (1080 / 3, 2000 / 3)
-        return Builder.load_string(kv)
+        self.load_kv()
+
+    def load_kv(self):
+        with open(self.path_to_kv_file, "r") as kv_file:
+            Builder.load_string(kv_file.read())
 
     def update_kv_file(self, text):
         with open(self.path_to_kv_file, "w") as kv_file:
             kv_file.write(text)
-
-
-app = MyApp()
-app.run()
