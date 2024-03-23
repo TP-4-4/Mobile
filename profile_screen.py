@@ -46,6 +46,5 @@ class MyApp(MDApp):
             kv_file.write(text)
 
 
-#if __name__ == '__main__':
 app = MyApp()
 app.run()
