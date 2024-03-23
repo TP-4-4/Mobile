@@ -1,0 +1,44 @@
+RelativeLayout:
+    BoxLayout:
+        orientation: 'vertical'
+        size_hint: 0.8, None
+        height: self.minimum_height
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+
+        MDTextField:
+            id: phone_number_field
+            hint_text: 'Номер телефона'
+            helper_text: 'Введите номер телефона'
+            helper_text_mode: 'on_focus'
+            size_hint_y: None
+            height: dp(40)
+
+        MDTextField:
+            id: password_field
+            hint_text: 'Пароль'
+            helper_text: 'Введите пароль'
+            helper_text_mode: 'on_focus'
+            password: True
+            size_hint_y: None
+            height: dp(40)
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: dp(36)
+            pos_hint: {'center_x': 0.5}
+            padding: dp(-20)
+
+            MDRaisedButton:
+                text: 'Войти'
+                size_hint_y: None
+                height: dp(36)
+                md_bg_color: (1, 0.478, 0, 1)
+                pos_hint: {"center_x": 0.5, "center_y": 0.5}
+                on_press: app.submit_data(phone_number_field.text, password_field.text)
+
+    MDIcon:
+        icon: "img/logo.png"
+        size_hint: None, None
+        size: dp(272), dp(150)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.75}
