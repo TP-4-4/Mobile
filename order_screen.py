@@ -1,6 +1,7 @@
 from kivy.lang import Builder
 from kivy.core.window import Window
 from kivy.core.image import Image as CoreImage
+from kivy.uix.screenmanager import Screen
 from kivymd.app import MDApp
 
 kv = '''
@@ -24,26 +25,22 @@ BoxLayout:
 
 '''
 
-class MyApp(MDApp):
+class OrderScreen(Screen):
     path_to_kv_file = "styles/style_for_order.kv"
 
-    image = CoreImage("img/logo.png")
-    width = image.width
-    height = image.height
-
-    number_ord = 123456
-    summa = 1234
-    addres = 'Ул. Станкевича, кв. 36'
-
-    def build(self):
-        # Window.fullscreen = 'auto'
+    def on_enter(self):
         Window.size = (1080 / 3, 2000 / 3)
-        return Builder.load_string(kv)
+        self.load_kv()
+
+
+    def load_kv(self):
+        with open(self.path_to_kv_file, "r", encoding='utf-8') as kv_file:
+            Builder.load_string(kv_file.read())
 
     def update_kv_file(self, text):
         with open(self.path_to_kv_file, "w") as kv_file:
             kv_file.write(text)
 
 
-app = MyApp()
-app.run()
+# app = MyApp()
+# app.run()

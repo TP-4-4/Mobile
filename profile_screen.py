@@ -25,7 +25,7 @@ BoxLayout:
 '''
 
 class ProfileScreen(Screen):
-    path_to_kv_file = "styles/style_for_pa.kv"
+    path_to_kv_file = "styles/style_for_profile.kv"
     last_name = 'Лобова'
     name = 'Екатерина'
     otchectvo = 'Николаевна'
@@ -41,7 +41,7 @@ class ProfileScreen(Screen):
         self.load_kv()
 
     def load_kv(self):
-        with open(self.path_to_kv_file, "r") as kv_file:
+        with open(self.path_to_kv_file, "r", encoding='utf-8') as kv_file:
             Builder.load_string(kv_file.read())
 
     def update_kv_file(self, text):

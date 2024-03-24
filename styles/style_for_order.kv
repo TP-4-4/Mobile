@@ -1,44 +1,44 @@
-FloatLayout:
+<OrderScreen>:
+    FloatLayout:
+        MDIcon:
+            icon: "img/logo.png"
+            size_hint: None, None
+            size: dp(app.width/5), dp(app.height/5)
+            pos_hint: {'left': 1, 'top': 1}
 
-    MDIcon:
-        icon: "img/logo.png"
-        size_hint: None, None
-        size: dp(app.width/5), dp(app.height/5)
-        pos_hint: {'left': 1, 'top': 1}
-
-    Label:
-        text: 'Заказы'
-        font_size: '24sp'
-        size_hint: None, None
-        pos_hint: {'center_x': 0.5, 'top': 0.9}
-        color: 1, 0.478, 0, 1
-
-
-    Label:
-        text: f'{app.number_ord}'
-        font_size: '22sp'
-        size_hint: None, None
-        pos_hint: {'center_x': 0.12, 'top': 0.8}
-        color: 1, 0.478, 0, 1
-
-    Label:
-        text: f'{app.summa} Р'
-        font_size: '18sp'
-        size_hint: None, None
-        pos_hint: {'center_x': 0.85, 'top': 0.8}
-        color: 0, 0, 0, 1
-
-    Label:
-        text: f'{app.addres}'
-        font_size: '15sp'
-        size_hint: None, None
-        pos_hint: {'center_x': 0.5, 'top': 0.8}
-        color: 0, 0, 0, 1
+        Label:
+            text: 'Заказы'
+            font_size: '24sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.9}
+            color: 1, 0.478, 0, 1
 
 
-    MDRaisedButton:
-        text: "Принять"
-        size_hint: None, None
-        height: dp(36)
-        md_bg_color: (1, 0.478, 0, 1)
-        pos_hint: {'center_x': 0.5, 'y': 0.65}
+        Label:
+            text: f'{app.number_ord}'
+            font_size: '22sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.12, 'top': 0.8}
+            color: 1, 0.478, 0, 1
+
+        Label:
+            text: f'{app.summa} Р'
+            font_size: '18sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.85, 'top': 0.8}
+            color: 0, 0, 0, 1
+
+        Label:
+            text: f'{app.addres}'
+            font_size: '15sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.8}
+            color: 0, 0, 0, 1
+
+
+        MDRaisedButton:
+            text: "Принять"
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.5, 'y': 0.65}
