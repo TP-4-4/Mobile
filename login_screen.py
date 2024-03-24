@@ -24,9 +24,9 @@ class LoginScreen(Screen):
             Builder.load_string(kv_file.read())
 
     def submit_data(self, phone_number, password):
-        # if validate_phone_number(phone_number):
-        print('Submitted data:')
-        print('Phone number:', phone_number)
-        print('Password:', password)
-        # else:
-        #    print('Invalid phone number. Please enter a valid Russian mobile phone number.')
+        if validate_phone_number(phone_number):
+            print('Submitted data:')
+            print('Phone number:', phone_number)
+            print('Password:', password)
+        else:
+            print('Invalid phone number. Please enter a valid Russian mobile phone number.')
