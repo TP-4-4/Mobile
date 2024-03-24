@@ -1,18 +1,18 @@
 <OrderScreen>:
     FloatLayout:
         MDIcon:
-            icon: "img/logo.png"
+            icon: 'img/logo.png'
             size_hint: None, None
             size: dp(app.width/5), dp(app.height/5)
             pos_hint: {'left': 1, 'top': 1}
 
         MDRaisedButton:
-            text: "Профиль"
+            text: 'Профиль'
             size_hint: None, None
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'right': 0.95, 'top': 0.97}
-            on_press: app.switch_to_profile_screen()
+            on_release: app.root.current = 'profile_screen'
 
         Label:
             text: 'Заказы'
@@ -45,7 +45,7 @@
 
 
         MDRaisedButton:
-            text: "Принять"
+            text: 'Принять'
             size_hint: None, None
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)

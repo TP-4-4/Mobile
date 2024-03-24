@@ -2,18 +2,18 @@
     FloatLayout:
 
         MDIcon:
-            icon: "img/logo.png"
+            icon: 'img/logo.png'
             size_hint: None, None
             size: dp(app.width/5), dp(app.height/5)
             pos_hint: {'left': 1, 'top': 1}
 
         MDRaisedButton:
-            text: "Заказы"
+            text: 'Заказы'
             size_hint: None, None
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'right': 0.95, 'top': 0.97}
-            on_press: app.switch_to_order_screen()
+            on_release: app.root.current = 'order_screen'
 
         Label:
             text: 'Личныe данные'
@@ -54,9 +54,9 @@
             color: 0, 0, 0, 1
 
         MDRaisedButton:
-            text: "Выйти"
+            text: 'Выйти'
             size_hint: None, None
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'center_x': 0.5, 'y': 0.05}
-            on_press: app.switch_to_login_screen()
+            on_release: app.root.current = 'login_screen'
