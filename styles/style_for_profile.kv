@@ -7,6 +7,14 @@
             size: dp(app.width/5), dp(app.height/5)
             pos_hint: {'left': 1, 'top': 1}
 
+        MDRaisedButton:
+            text: "Заказы"
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'right': 0.95, 'top': 0.97}
+            on_press: app.switch_to_order_screen()
+
         Label:
             text: 'Личныe данные'
             font_size: '24sp'
@@ -51,3 +59,4 @@
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'center_x': 0.5, 'y': 0.05}
+            on_press: app.switch_to_login_screen()

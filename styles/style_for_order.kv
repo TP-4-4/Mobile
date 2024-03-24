@@ -6,6 +6,14 @@
             size: dp(app.width/5), dp(app.height/5)
             pos_hint: {'left': 1, 'top': 1}
 
+        MDRaisedButton:
+            text: "Профиль"
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'right': 0.95, 'top': 0.97}
+            on_press: app.switch_to_profile_screen()
+
         Label:
             text: 'Заказы'
             font_size: '24sp'

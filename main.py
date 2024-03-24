@@ -9,6 +9,28 @@ from login_screen import LoginScreen
 from profile_screen import ProfileScreen
 from order_screen import OrderScreen
 
+
+kv = '''
+#:import KivyLexer kivy.extras.highlight.KivyLexer
+#:import HotReloadViewer kivymd.utils.hot_reload_viewer.HotReloadViewer
+
+BoxLayout:
+
+    # CodeInput:
+    #     lexer: KivyLexer()
+    #     style_name: "native"
+    #     on_text: app.update_kv_file(self.text)
+    #     size_hint_x: .7
+
+    HotReloadViewer:
+        size_hint_x: .3
+        path: app.path_to_kv_file
+        errors: True
+        errors_text_color: 1, 0, 0, 1
+        errors_background_color: app.theme_cls.bg_dark
+
+'''
+
 class WindowManager(ScreenManager):
     pass
 
@@ -28,6 +50,8 @@ class MyApp(MDApp):
         sm.add_widget(OrderScreen(name="order_screen"))
         sm.add_widget(LoginScreen(name="login_screen"))
         sm.add_widget(ProfileScreen(name="profile_screen"))
+
+
         return Builder.load_file("styles/style_for_main.kv")
        # return sm
 
@@ -42,6 +66,9 @@ class MyApp(MDApp):
 
     def switch_to_order_screen(self):
         self.root.current = "order_screen"
+
+    def switch_to_profile_screen(self):
+        self.root.current = "profile_screen"
 
 
 if __name__ == "__main__":
