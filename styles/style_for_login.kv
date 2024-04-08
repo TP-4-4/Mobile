@@ -3,14 +3,14 @@
         MDIcon:
             icon: 'img/logo.png'
             size_hint: None, None
-            size: dp(app.width/2.2), dp(app.height/2.2)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.75}
+            size: dp(app.width/2), dp(app.height/2)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.78}
 
         BoxLayout:
             orientation: 'vertical'
-            size_hint: 0.72, None
+            size_hint: 0.80, None
             spacing: dp(20)
-            height: dp(300)
+            height: dp(350)
             padding: dp(30)
             pos_hint: {'center_x': 0.5, 'center_y': 0.38}
 
@@ -30,7 +30,7 @@
             canvas:
                 Color:
                     rgba: 1, 1, 1, 1
-                Rectangle:
+                RoundedRectangle:
                     pos: self.pos
                     size: self.size
 
@@ -66,9 +66,7 @@
                     id: phone_number_field
                     height: dp(700)
                     normal_color: 1, 1, 1, 1
-
-
-
+                    color_active: 1, 1, 1, 1
 
                 Label:
                     text: 'Пароль'
@@ -80,6 +78,7 @@
                     halign: 'left'
                     valign: 'middle'
                     color: 0, 0, 0, 0.6
+
                 MDTextFieldRound:
                     font_name: 'styles/Montserrat-Bold.ttf'
                     id: password_field
@@ -87,16 +86,33 @@
                     size_hint_y: None
                     height: dp(48)
                     normal_color: 1, 1, 1, 1
-                    color_mode: 'accent'
-                    hint_text_color: 1, 1, 1, 1
+                    color_active: 1, 1, 1, 1
+
+                Label:
+                    id: error_label  # ID для метки ошибки
+                    text: ''  # Изначально пустой текст
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '11sp'
+                    size_hint_y: None
+                    height: dp(24)
+                    text_size: self.size
+                    halign: 'center'
+                    valign: 'middle'
+                    color: 1, 0, 0, 1  # Красный цвет текста для ошибки
 
             MDFillRoundFlatButton:
-                text: 'Войти'
+                canvas.before:
+                    RoundedRectangle:
+                        pos: self.pos
+                        size: self.size
+                text: 'Войти'  # Здесь определяем текст кнопки
                 font_name: 'styles/Montserrat-ExtraBold.ttf'
                 font_size: '12sp'
                 md_bg_color: (1, 0.478, 0, 1)
                 pos_hint: {'center_x': 0.5}
-                on_press: app.submit_login_data(phone_number_field.text, password_field.text);
-                on_release:
-                    app.root.current = 'order_screen'
+                on_press: app.submit_login_data(phone_number_field.text, password_field.text)
                 margin: dp(10)
+
+
+
+

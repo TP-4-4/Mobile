@@ -1,64 +1,44 @@
-from kivymd.app import MDApp
-import re
+from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
-from kivy.core.window import Window
+import re
+
+from sqlalchemy.orm import Session
+
+from services.auth import authenticate_user
 
 
 def validate_phone_number(phone_number):
-    # Паттерн для проверки на корректность российского мобильного номера
     pattern = re.compile(r'^(?:\+7|8)\d{10}$')
 
-    # Проверка соответствия введенного номера паттерну
     if pattern.match(phone_number):
         return True
     else:
         return False
 
 
-kv = '''
-#:import KivyLexer kivy.extras.highlight.KivyLexer
-#:import HotReloadViewer kivymd.utils.hot_reload_viewer.HotReloadViewer
+class LoginScreen(Screen):
+    path_to_kv_file = './styles/style_for_login.kv'
 
-BoxLayout:
+    def __init__(self, **kwargs):
+        super(LoginScreen, self).__init__(**kwargs)
+        self.load_kv()
 
-    # CodeInput:
-    #     lexer: KivyLexer()
-    #     style_name: "native"
-    #     on_text: app.update_kv_file(self.text)
-    #     size_hint_x: .7
+    def load_kv(self):
+        with open(self.path_to_kv_file, 'r', encoding='utf-8') as kv_file:
+            Builder.load_string(kv_file.read())
 
-    HotReloadViewer:
-        size_hint_x: .3
-        path: app.path_to_kv_file
-        errors: True
-        errors_text_color: 1, 1, 0, 1
-        errors_background_color: app.theme_cls.bg_dark
+    def submit_data(self, db_session, phone_number, password):
+        # Передача объекта сессии напрямую в функцию аутентификации
+        user = authenticate_user(db_session, phone_number, password)
+        if user:
+            print('Authentication successful!')
+            self.manager.current = 'order_screen'  # Переход на экран заказа
+            self.ids.phone_number_field.text = ''
+            self.ids.password_field.text = ''
+            self.ids.error_label.text = ''
 
-'''
+        else:
+            if self.ids.phone_number_field.text != '' or self.ids.password_field.text != '':
+                self.ids.error_label.text = "Неверный номер телефона или пароль"
+                print('Authentication failed. Invalid credentials.')
 
-
-class MyApp(MDApp):
-    path_to_kv_file = "styles/style_for_login.kv"
-
-    def build(self):
-        # Window.fullscreen = 'auto'
-        Window.size = (1080 / 3, 2000 / 3)
-        return Builder.load_string(kv)
-
-    def submit_data(self, phone_number, password):
-        #if validate_phone_number(phone_number):
-        print("Submitted data:")
-        print("Phone number:", phone_number)
-        print("Password:", password)
-        # Вставьте здесь код для обработки введенных данных
-        #else:
-        #    print("Invalid phone number. Please enter a valid Russian mobile phone number.")
-
-    def update_kv_file(self, text):
-        with open(self.path_to_kv_file, "w") as kv_file:
-            kv_file.write(text)
-
-
-#if __name__ == '__main__':
-app = MyApp()
-app.run()
