@@ -1,4 +1,3 @@
-import bcrypt
 from kivy.core.image import Image as CoreImage
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
@@ -6,9 +5,9 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 
 from bd.database import SessionLocal
-from login_screen import LoginScreen
-from profile_screen import ProfileScreen
-from order_screen import OrderScreen
+from screens.login_screen import LoginScreen
+from screens.profile_screen import ProfileScreen
+from screens.order_screen import OrderScreen
 
 
 

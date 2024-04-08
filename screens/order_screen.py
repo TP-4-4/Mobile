@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import Screen
 
 
 class OrderScreen(Screen):
-    path_to_kv_file = 'styles/style_for_order.kv'
+    path_to_kv_file = './styles/style_for_order.kv'
 
     def __init__(self, **kwargs):
         super(OrderScreen, self).__init__(**kwargs)
