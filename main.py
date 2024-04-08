@@ -1,3 +1,4 @@
+import bcrypt
 from kivy.core.image import Image as CoreImage
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
@@ -37,6 +38,7 @@ class WindowManager(ScreenManager):
 
 
 class MyApp(MDApp):
+
     number_ord = 123456
     summa = 1234
     addres = 'Ул. Станкевича, кв. 36'
@@ -46,21 +48,23 @@ class MyApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        # Создание объекта сессии и передача его в приложение
         self.db_session = SessionLocal()
+
     def build(self):
-        sm = WindowManager()
+        self.root = WindowManager()  # Set WindowManager as the root
         Window.size = (1080 / 3, 2000 / 3)
         # Window.fullscreen = 'auto'
-        sm.add_widget(OrderScreen(name='order_screen'))
-        sm.add_widget(LoginScreen(name='login_screen'))
-        sm.add_widget(ProfileScreen(name='profile_screen'))
+        self.root.add_widget(OrderScreen(name='order_screen'))
+        self.root.add_widget(LoginScreen(name='login_screen'))
+        self.root.add_widget(ProfileScreen(name='profile_screen'))
 
         return Builder.load_file('styles/style_for_main.kv')
-        # return sm
 
     def submit_login_data(self, phone_number, password):
         login_screen = self.root.get_screen('login_screen')
-        login_screen.submit_data(phone_number, password)
+        if login_screen:
+            login_screen.submit_data(self.db_session, phone_number, password)
 
 
 if __name__ == '__main__':
