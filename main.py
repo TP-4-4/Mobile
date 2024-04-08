@@ -1,8 +1,11 @@
+import bcrypt
 from kivy.core.image import Image as CoreImage
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivy.lang import Builder
 from kivy.core.window import Window
+
+from bd.database import SessionLocal
 from login_screen import LoginScreen
 from profile_screen import ProfileScreen
 from order_screen import OrderScreen
@@ -30,7 +33,6 @@ BoxLayout:
 
 '''
 
-
 class WindowManager(ScreenManager):
     pass
 
@@ -43,6 +45,9 @@ class MyApp(MDApp):
     width = image.width
     height = image.height
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.db_session = SessionLocal()
     def build(self):
         sm = WindowManager()
         Window.size = (1080 / 3, 2000 / 3)
