@@ -2,6 +2,10 @@ from kivy.uix.screenmanager import Screen
 from kivy.lang import Builder
 import re
 
+from sqlalchemy.orm import Session
+
+from services.auth import authenticate_user
+
 
 def validate_phone_number(phone_number):
     pattern = re.compile(r'^(?:\+7|8)\d{10}$')
@@ -13,7 +17,7 @@ def validate_phone_number(phone_number):
 
 
 class LoginScreen(Screen):
-    path_to_kv_file = 'styles/style_for_login.kv'
+    path_to_kv_file = './styles/style_for_login.kv'
 
     def __init__(self, **kwargs):
         super(LoginScreen, self).__init__(**kwargs)
@@ -23,10 +27,18 @@ class LoginScreen(Screen):
         with open(self.path_to_kv_file, 'r', encoding='utf-8') as kv_file:
             Builder.load_string(kv_file.read())
 
-    def submit_data(self, phone_number, password):
-        if validate_phone_number(phone_number):
-            print('Submitted data:')
-            print('Phone number:', phone_number)
-            print('Password:', password)
+    def submit_data(self, db_session, phone_number, password):
+        # Передача объекта сессии напрямую в функцию аутентификации
+        user = authenticate_user(db_session, phone_number, password)
+        if user:
+            print('Authentication successful!')
+            self.manager.current = 'order_screen'  # Переход на экран заказа
+            self.ids.phone_number_field.text = ''
+            self.ids.password_field.text = ''
+            self.ids.error_label.text = ''
+
         else:
-            print('Invalid phone number. Please enter a valid Russian mobile phone number.')
+            if self.ids.phone_number_field.text != '' or self.ids.password_field.text != '':
+                self.ids.error_label.text = "Неверный номер телефона или пароль"
+                print('Authentication failed. Invalid credentials.')
+
