@@ -6,6 +6,7 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 
 from bd.database import SessionLocal
+from models.order import Order
 from screens.login_screen import LoginScreen
 from screens.profile_screen import ProfileScreen
 from screens.order_screen import OrderScreen
@@ -38,7 +39,6 @@ class WindowManager(ScreenManager):
 
 
 class MyApp(MDApp):
-
     number_ord = 123456
     summa = 1234
     addres = 'Ул. Станкевича, кв. 36'
@@ -61,12 +61,29 @@ class MyApp(MDApp):
 
         return Builder.load_file('styles/style_for_main.kv')
 
+    def change_order_status(self, order_id: int, new_status: str):
+        Order.change_status(self.db_session, order_id, new_status)
+
     def submit_login_data(self, phone_number, password):
         login_screen = self.root.get_screen('login_screen')
         if login_screen:
             login_screen.submit_data(self.db_session, phone_number, password)
 
 
+# def encrypt_password(password):
+#     # Генерация соли
+#     salt = bcrypt.gensalt()
+#     # Хэширование пароля с использованием соли
+#     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+#     return hashed_password
+
+
 if __name__ == '__main__':
+    # password = '1'
+    # encrypted_password = encrypt_password(password)
+    # print("Зашифрованный пароль:", encrypted_password)
+    #  Зашифрованный пароль: b'$2b$12$6pVGF6spEu7C5JSOC56Bguf35EWNpAqiip6Z2wUH7ES3o3/hKfW66'
     app = MyApp()
     app.run()
+
+

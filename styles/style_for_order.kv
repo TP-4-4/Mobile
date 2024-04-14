@@ -6,7 +6,12 @@
             size: dp(app.width/5), dp(app.height/5)
             pos_hint: {'left': 1, 'top': 1}
 
-        MDRaisedButton:
+
+        MDFillRoundFlatButton:
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
             text: 'Профиль'
             size_hint: None, None
             height: dp(36)
@@ -16,37 +21,118 @@
 
         Label:
             text: 'Заказы'
-            font_size: '24sp'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '20sp'
             size_hint: None, None
             pos_hint: {'center_x': 0.5, 'top': 0.9}
             color: 1, 0.478, 0, 1
 
 
         Label:
-            text: f'{app.number_ord}'
+            id: order_number_label
+            text: ''
             font_size: '22sp'
             size_hint: None, None
             pos_hint: {'center_x': 0.12, 'top': 0.8}
             color: 1, 0.478, 0, 1
 
         Label:
-            text: f'{app.summa} Р'
+            id: total_amount_label
+            text: ''
             font_size: '18sp'
             size_hint: None, None
             pos_hint: {'center_x': 0.85, 'top': 0.8}
             color: 0, 0, 0, 1
 
         Label:
-            text: f'{app.addres}'
+            id: address_label
+            text: ''
             font_size: '15sp'
             size_hint: None, None
             pos_hint: {'center_x': 0.5, 'top': 0.8}
             color: 0, 0, 0, 1
 
-
-        MDRaisedButton:
+        MDFillRoundFlatButton:
+            id: accept_button
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
             text: 'Принять'
             size_hint: None, None
             height: dp(36)
             md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.3, 'y': 0.65}
+            on_release:
+                root.switch_buttons()
+                app.change_order_status(1, "ACCEPTED")
+
+        MDFillRoundFlatButton:
+            id: cancel_button
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Отменить'
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.3, 'y': 0.65}
+            opacity: 0
+            on_release:
+                root.switch_buttons()
+                app.change_order_status(1, "CANCELED")
+
+        MDFillRoundFlatButton:
+            id: map_button
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Карта'
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.7, 'y': 0.65}
+            opacity: 0
+            on_release: root.show_map()
+
+        AsyncImage:
+            id: map_image
+            source: 'img/map.jpg'
+            size_hint: None, None
+            size: dp(300), dp(300)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            opacity: 0
+            on_opacity:
+                root.ids.complete_button.pos = (root.ids.complete_button.pos[0], 0.8 * root.height) if self.opacity == 1 else (root.ids.complete_button.pos[0], 1.5 * root.height)
+
+        MDFillRoundFlatButton:
+            id: complete_button
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Завершить'
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.5}
+            y: root.height * 1.5  # Поднимаем кнопку немного выше
+            opacity: 0
+            on_release:
+                root.complete_order()
+                app.change_order_status(1, "COMPLETED")
+
+        Label:
+            id: completed_label
+            font_name: 'styles/Montserrat-SemiBold.ttf'
+            font_size: '12sp'
+            color: 0, 0, 0, 0.4
+            text: 'Завершён'
+            size_hint: None, None
+            size: self.texture_size
             pos_hint: {'center_x': 0.5, 'y': 0.65}
+            opacity: 0
+
+

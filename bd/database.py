@@ -3,7 +3,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 # Замените 'database_url' на вашу строку подключения к базе данных PostgreSQL
-DATABASE_URL = 'postgresql://postgres:1234@localhost/deliveryman'
+DATABASE_URL = 'postgresql://postgres:1234@localhost/delivery_man'
 
 # Создаем движок базы данных SQLAlchemy
 engine = create_engine(DATABASE_URL)

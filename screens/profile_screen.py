@@ -21,7 +21,7 @@ class ProfileScreen(Screen):
         self.load_profile_data(App.get_running_app().db_session)
 
     def load_profile_data(self, db_session):
-        user_id = 2
+        user_id = 1
         user = User.get_user_info_by_id(db_session, user_id)  # Вот здесь вызывается метод из модели User
 
         self.ids.last_name_label.text = str(user.last_name)
