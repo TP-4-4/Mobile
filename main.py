@@ -70,18 +70,20 @@ class MyApp(MDApp):
             login_screen.submit_data(self.db_session, phone_number, password)
 
 
-# def encrypt_password(password):
-#     # Генерация соли
-#     salt = bcrypt.gensalt()
-#     # Хэширование пароля с использованием соли
-#     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
-#     return hashed_password
+
+
+def encrypt_password(password):
+    # Генерация соли
+    salt = bcrypt.gensalt()
+    # Хэширование пароля с использованием соли
+    hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
+    return hashed_password
 
 
 if __name__ == '__main__':
-    # password = '1'
-    # encrypted_password = encrypt_password(password)
-    # print("Зашифрованный пароль:", encrypted_password)
+    password = '2'
+    encrypted_password = encrypt_password(password)
+    print("Зашифрованный пароль:", encrypted_password)
     #  Зашифрованный пароль: b'$2b$12$6pVGF6spEu7C5JSOC56Bguf35EWNpAqiip6Z2wUH7ES3o3/hKfW66'
     app = MyApp()
     app.run()

@@ -36,6 +36,16 @@ class LoginScreen(Screen):
             self.ids.phone_number_field.text = ''
             self.ids.password_field.text = ''
             self.ids.error_label.text = ''
+            user_id = user.id
+            print("User ID:", user_id)
+
+            profile_screen = self.manager.get_screen('profile_screen')
+            if profile_screen:
+                profile_screen.load_profile_data(db_session, user_id)
+
+            order_screen = self.manager.get_screen('order_screen')
+            if order_screen:
+                order_screen.load_order_data(db_session, user_id)
 
         else:
             if self.ids.phone_number_field.text != '' or self.ids.password_field.text != '':

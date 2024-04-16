@@ -2,7 +2,10 @@ from kivy.animation import Animation
 from kivy.app import App
 from kivy.core.image import Image as CoreImage
 from kivy.lang import Builder
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
+from kivymd.uix.button import MDFillRoundFlatButton
+
 from models.order import Order
 
 
@@ -16,56 +19,22 @@ class OrderScreen(Screen):
         super(OrderScreen, self).__init__(**kwargs)
         self.load_kv()
 
-    def on_pre_enter(self, *args):
-        self.load_order_data(App.get_running_app().db_session)
+    def load_order_data(self, db_session, user_id):
+        orders = Order.get_orders_by_user_id(db_session, user_id)
+        order_layout = self.ids.order_layout
+        order_layout.clear_widgets()
 
-    def load_order_data(self, db_session):
-        user_id = 1
-        orders = Order.get_orders_by_user_id(db_session, user_id)  # Вот здесь вызывается метод из модели User
-        print(orders)
-        print(orders[0].order_number, orders[0].address, orders[0].total_amount)
+        for index, order in enumerate(orders):
+            order_number_label = Label(text=str(order.order_number), font_size='20sp', text_size=(100, None), font_name='styles/Montserrat-ExtraBold.ttf',
+                                       color=(1, 0.478, 0, 1))
+            total_amount_label = Label(text=str(order.address), font_size='13sp', text_size=(100, None), font_name='styles/Montserrat-SemiBold.ttf',
+                                       color=(0, 0, 0, 0.6))
+            address_label = Label(text=str(order.total_amount), font_size='13sp', text_size=(100, None), font_name='styles/Montserrat-Bold.ttf',
+                                  color=(0, 0, 0, 1))
 
-    def show_map(self):
-        map_image = self.ids.map_image
-        if map_image.opacity == 0:
-            Animation(opacity=1, duration=0).start(map_image)
-        else:
-            Animation(opacity=0, duration=0).start(map_image)
-
-    def switch_buttons(self):
-        accept_button = self.ids.accept_button
-        cancel_button = self.ids.cancel_button
-        map_button = self.ids.map_button
-        complete_button = self.ids.complete_button
-        map_image = self.ids.map_image
-
-        if accept_button.opacity == 1:
-            Animation(opacity=0, duration=0).start(accept_button)
-            Animation(opacity=1, duration=0).start(cancel_button)
-            Animation(opacity=1, duration=0).start(map_button)
-            Animation(opacity=1, duration=0).start(complete_button)
-        else:
-            Animation(opacity=0, duration=0).start(cancel_button)
-            Animation(opacity=1, duration=0).start(accept_button)
-            Animation(opacity=0, duration=0).start(map_button)
-            Animation(opacity=0, duration=0).start(complete_button)
-            if map_image.opacity == 1:
-                Animation(opacity=0, duration=0).start(map_image)
-
-    def complete_order(self):
-        completed_label = self.ids.completed_label
-        accept_button = self.ids.accept_button
-        cancel_button = self.ids.cancel_button
-        map_button = self.ids.map_button
-        complete_button = self.ids.complete_button
-        map_image = self.ids.map_image
-        if completed_label.opacity == 0:
-            Animation(opacity=0, duration=0).start(accept_button)
-            Animation(opacity=1, duration=0).start(completed_label)
-            Animation(opacity=0, duration=0).start(map_button)
-            Animation(opacity=0, duration=0).start(map_image)
-            Animation(opacity=0, duration=0).start(cancel_button)
-            Animation(opacity=0, duration=0).start(complete_button)
+            order_layout.add_widget(order_number_label)
+            order_layout.add_widget(total_amount_label)
+            order_layout.add_widget(address_label)
 
     def load_kv(self):
         with open(self.path_to_kv_file, 'r', encoding='utf-8') as kv_file:
