@@ -9,10 +9,10 @@ from bd.database import Base
 
 
 class StatusEnum(Enum):
-    NOT_ACCEPTED = 0
-    ACCEPTED = 1
-    CANCELED = 2
-    COMPLETED = 3
+    NOT_ACCEPTED = 'not_accepted'
+    ACCEPTED = 'accepted'
+    CANCELED = 'canceled'
+    COMPLETED = 'completed'
 
 class Order(Base):
     __tablename__ = 'orders'
@@ -30,11 +30,16 @@ class Order(Base):
         orders = db.query(cls).filter(cls.user_id == user_id).all()
         return orders
 
-    def change_status(db_session: Session, order_id: int, new_status: str):
-        order = db_session.query(Order).filter(Order.id == order_id).first()
+    @classmethod
+    def get_order_by_id(cls, db: Session, order_id: int):
+        order = db.query(cls).get(order_id)
+        return order
+
+    def change_status(db: Session, order_id: int, new_status: StatusEnum):
+        order = db.query(Order).filter(Order.id == order_id).first()
         if order:
             order.status = new_status
-            db_session.commit()
+            db.commit()
             print(f"Order status changed to {new_status}")
         else:
             print("Order not found")

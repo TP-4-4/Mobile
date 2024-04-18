@@ -1,0 +1,50 @@
+<OneOrderScreen>:
+    BoxLayout:
+        id: finish_button  # Add this line to define the id for the back button
+        orientation: 'vertical'
+    BoxLayout:
+        id: cancel_button  # Add this line to define the id for the back button
+        orientation: 'vertical'
+    BoxLayout:
+        id: map_button  # Add this line to define the id for the back button
+        orientation: 'vertical'
+    FloatLayout:
+        MDIcon:
+            icon: 'img/logo.png'
+            size_hint: None, None
+            size: dp(app.width/5), dp(app.height/5)
+            pos_hint: {'left': 1, 'top': 1}
+
+        Label:
+            id: order_number_label
+            text: ''
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '20sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.95}  # Изменено значение pos_hint
+            color: 1, 0.478, 0, 1
+
+        Label:
+            id: address_label  # Идентификатор для адреса
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.9}
+            color: 0, 0, 0, 0.4
+
+        Label:
+            id: total_amount_label  # Идентификатор для общей суммы
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.85}
+            color: 0, 0, 0, 0.4
+
+        Label:
+            id: name_client_label  # Идентификатор для имени клиента
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.8}
+            color: 0, 0, 0, 0.4
+
+        Label:
+            id: phone_number_client_label  # Идентификатор для номера телефона клиента
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.75}
+            color: 0, 0, 0, 0.4
+

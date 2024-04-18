@@ -32,7 +32,7 @@ class LoginScreen(Screen):
         user = authenticate_user(db_session, phone_number, password)
         if user:
             print('Authentication successful!')
-            self.manager.current = 'order_screen'  # Переход на экран заказа
+            self.manager.current = 'orders_screen'  # Переход на экран заказа
             self.ids.phone_number_field.text = ''
             self.ids.password_field.text = ''
             self.ids.error_label.text = ''
@@ -43,9 +43,9 @@ class LoginScreen(Screen):
             if profile_screen:
                 profile_screen.load_profile_data(db_session, user_id)
 
-            order_screen = self.manager.get_screen('order_screen')
-            if order_screen:
-                order_screen.load_order_data(db_session, user_id)
+            orders_screen = self.manager.get_screen('orders_screen')
+            if orders_screen:
+                orders_screen.load_orders_data(db_session, user_id)
 
         else:
             if self.ids.phone_number_field.text != '' or self.ids.password_field.text != '':

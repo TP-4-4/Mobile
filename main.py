@@ -8,8 +8,9 @@ from kivy.core.window import Window
 from bd.database import SessionLocal
 from models.order import Order
 from screens.login_screen import LoginScreen
+from screens.one_order_screen import OneOrderScreen
 from screens.profile_screen import ProfileScreen
-from screens.order_screen import OrderScreen
+from screens.orders_screen import OrdersScreen
 
 
 
@@ -39,9 +40,7 @@ class WindowManager(ScreenManager):
 
 
 class MyApp(MDApp):
-    number_ord = 123456
-    summa = 1234
-    addres = 'Ул. Станкевича, кв. 36'
+    current_order_id = None
     image = CoreImage('img/logo.png')
     width = image.width
     height = image.height
@@ -55,14 +54,15 @@ class MyApp(MDApp):
         self.root = WindowManager()  # Set WindowManager as the root
         Window.size = (1080 / 3, 2000 / 3)
         # Window.fullscreen = 'auto'
-        self.root.add_widget(OrderScreen(name='order_screen'))
+        self.root.add_widget(OrdersScreen(name='orders_screen'))
+        self.root.add_widget(OneOrderScreen(name='one_order_screen'))
         self.root.add_widget(LoginScreen(name='login_screen'))
         self.root.add_widget(ProfileScreen(name='profile_screen'))
 
         return Builder.load_file('styles/style_for_main.kv')
 
-    def change_order_status(self, order_id: int, new_status: str):
-        Order.change_status(self.db_session, order_id, new_status)
+    # def change_order_status(self, order_id: int, new_status: str):
+    #     Order.change_status(self.db_session, order_id, new_status)
 
     def submit_login_data(self, phone_number, password):
         login_screen = self.root.get_screen('login_screen')
