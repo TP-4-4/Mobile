@@ -13,8 +13,9 @@
                     pos: self.pos
                     size: self.size
             text: 'Заказы'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
             size_hint: None, None
-            height: dp(36)
+            font_size: '12sp'
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'right': 0.95, 'top': 0.97}
             on_release: app.root.current = 'orders_screen'
@@ -175,8 +176,9 @@
                     pos: self.pos
                     size: self.size
             text: 'Выйти'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
             size_hint: None, None
-            height: dp(36)
+            font_size: '12sp'
             md_bg_color: (1, 0.478, 0, 1)
             pos_hint: {'center_x': 0.5, 'y': 0.05}
             on_release: app.root.current = 'login_screen'

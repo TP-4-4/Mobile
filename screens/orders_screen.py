@@ -2,6 +2,7 @@ from kivy.animation import Animation
 from kivy.app import App
 from kivy.core.image import Image as CoreImage
 from kivy.lang import Builder
+from kivy.metrics import dp
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
@@ -25,16 +26,17 @@ class OrdersScreen(Screen):
         orders_layout.clear_widgets()
 
         for index, order in enumerate(orders):
-            order_number_label = Label(text=str(order.order_number), font_size='20sp', text_size=(150, None), font_name='styles/Montserrat-ExtraBold.ttf',
+            order_number_label = Label(text=str(order.order_number), font_size='18sp', text_size=(100, None), font_name='styles/Montserrat-ExtraBold.ttf',
                                        color=(1, 0.478, 0, 1))
             # total_amount_label = Label(text=str(order.total_amount), font_size='13sp', text_size=(150, None), font_name='styles/Montserrat-SemiBold.ttf',
             #                            color=(0, 0, 0, 0.6))
-            address_label = Label(text=str(order.address), font_size='13sp', text_size=(150, None), font_name='styles/Montserrat-Bold.ttf',
+            address_label = Label(text=str(order.address), font_size='12sp', text_size=(150, None), font_name='styles/Montserrat-Bold.ttf',
                                   color=(0, 0, 0, 0.6))
 
             move_button = MDIconButton(
-                icon='img/next.png',  # Путь к вашей иконке
-                on_release=lambda btn, order_id=order.id: self.move_order(db_session, order_id)
+                icon='img/next.png',
+                on_release=lambda btn, order_id=order.id: self.move_order(db_session, order_id),
+                user_font_size="10sp"
             )
 
             orders_layout.add_widget(order_number_label)
