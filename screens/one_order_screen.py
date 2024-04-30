@@ -37,6 +37,10 @@ class OneOrderScreen(Screen):
         if status == StatusEnum.COMPLETED:
             self.ids.completed.text = 'Заказ Завершён'
 
+        if status == StatusEnum.CANCELED:
+            self.ids.canceled.text = 'Заказ Отменён'
+
+
         elif status == StatusEnum.NOT_ACCEPTED:
             self.accept_button = MDFillRoundFlatButton(text='Принять', size_hint=(None, None), height='36dp',
                                                        md_bg_color=(1, 0.478, 0, 1),
@@ -109,12 +113,7 @@ class OneOrderScreen(Screen):
         popup.dismiss()
         Order.change_status(db_session, order_id, StatusEnum.CANCELED)
         self.remove_buttons()
-        self.accept_button = MDFillRoundFlatButton(text='Принять', size_hint=(None, None),
-                                                   font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
-                                                   md_bg_color=(1, 0.478, 0, 1),
-                                                   pos_hint={'center_x': 0.5, 'top': 0.25})
-        self.accept_button.bind(on_release=lambda instance: self.accept_order(db_session, order_id, self.accept_button))
-        self.add_widget(self.accept_button)
+        self.ids.canceled.text = 'Заказ Отменён'
 
     def show_map(self):
         map_popup = Popup(
@@ -153,6 +152,7 @@ class OneOrderScreen(Screen):
             self.remove_widget(self.finish_button)
             self.finish_button = None
         self.ids.completed.text = ''
+        self.ids.canceled.text = ''
 
     def on_pre_leave(self, *args):
         self.remove_buttons()
