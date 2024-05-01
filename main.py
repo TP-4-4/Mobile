@@ -81,7 +81,7 @@ def encrypt_password(password):
 
 
 if __name__ == '__main__':
-    password = '2'
+    password = '1'
     encrypted_password = encrypt_password(password)
     print("Зашифрованный пароль:", encrypted_password)
     #  Зашифрованный пароль: b'$2b$12$6pVGF6spEu7C5JSOC56Bguf35EWNpAqiip6Z2wUH7ES3o3/hKfW66'

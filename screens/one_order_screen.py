@@ -1,3 +1,7 @@
+import time
+
+import openrouteservice
+from kivy.clock import Clock
 from kivy.core.image import Image as CoreImage, Image
 from kivy.lang import Builder
 from kivy.uix.boxlayout import BoxLayout
@@ -5,9 +9,15 @@ from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapView, MapMarker
 from kivy.uix.popup import Popup
 from kivy.uix.label import Label
+from kivy_garden.mapview.geojson import GeoJsonMapLayer
 from kivymd.uix.button import MDFillRoundFlatButton
 
+from models.map import Map
 from models.order import Order, StatusEnum
+import polyline
+from kivy.graphics import Line
+
+from services.map import MapBuilder
 
 
 class OneOrderScreen(Screen):
@@ -18,6 +28,7 @@ class OneOrderScreen(Screen):
 
     def __init__(self, **kwargs):
         super(OneOrderScreen, self).__init__(**kwargs)
+        self.map_builder = MapBuilder()
         self.load_kv()
         self.cancel_button = None
         self.map_button = None
@@ -65,7 +76,7 @@ class OneOrderScreen(Screen):
                                                     font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                     md_bg_color=(1, 0.478, 0, 1),
                                                     pos_hint={'center_x': 0.7, 'top': 0.25})
-            self.map_button.bind(on_release=lambda instance: self.show_map())
+            self.map_button.bind(on_release=lambda instance: self.show_map(db_session, order_id))
 
             self.finish_button = MDFillRoundFlatButton(text='Завершить', size_hint=(None, None),
                                                        font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
@@ -115,23 +126,37 @@ class OneOrderScreen(Screen):
         self.remove_buttons()
         self.ids.canceled.text = 'Заказ Отменён'
 
-    def show_map(self):
-        map_popup = Popup(
-            title='Карта',
-            size_hint=(None, None),
-            size=(400, 500),
-            separator_color=[1, 0.478, 0, 1],
-            background_color=[4, .4, .2, 1],
-        )
-        map_view = MapView(lat=51.670833, lon=39.214167, zoom=10)
-        map_marker1 = MapMarker(lat=51.656495, lon=39.206099, source='img/map_marker.png')
-        map_view.add_widget(map_marker1)
+    def show_map(self, db_session, order_id):
+        coord = Map.get_coord_by_id(db_session, order_id)
 
-        map_marker2 = MapMarker(lat=51.6661909351859, lon=39.1918509123225, source='img/map_marker.png')
-        map_view.add_widget(map_marker2)
+        route_coordinates = [(39.20563, 51.65714), (39.20572, 51.65716), (39.20576, 51.65719),
+                             (39.20535, 51.65733),
+                             (39.20532, 51.65736), (39.20527, 51.65747), (39.20514, 51.6576), (39.20503, 51.6577),
+                             (39.20445, 51.65818), (39.20377, 51.65874), (39.20321, 51.6592), (39.20253, 51.65977),
+                             (39.20151, 51.66062), (39.20029, 51.66161), (39.19967, 51.6621), (39.19918, 51.6625),
+                             (39.19719, 51.66413), (39.1957, 51.66536), (39.19555, 51.6653), (39.19481, 51.66501),
+                             (39.19439, 51.66485), (39.19403, 51.66469), (39.19317, 51.66434), (39.19201, 51.6653),
+                             (39.19039, 51.66575), (39.19024, 51.6658), (39.19033, 51.66593), (39.19098, 51.66683),
+                             (39.19209, 51.66652)]
 
+        map_popup = self.map_builder.create_map_popup()
+        map_view = self.map_builder.create_map_with_route(coord.start_longitude, coord.start_latitude,
+                                                          coord.end_longitude, coord.end_latitude)
         map_popup.content = map_view
+
         map_popup.open()
+
+        index = 0
+
+        def update_map_content(dt):
+            nonlocal index
+            if index < len(route_coordinates):
+                self.map_builder.update_route(map_view, route_coordinates, index)
+                index += 1
+            else:
+                Clock.unschedule(update_map_content)
+
+        Clock.schedule_interval(update_map_content, 2)
 
     def finish_order(self, db_session, order_id):
         Order.change_status(db_session, order_id, StatusEnum.COMPLETED)

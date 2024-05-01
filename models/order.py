@@ -23,6 +23,7 @@ class Order(Base):
     status = Column(EnumColumn(StatusEnum), default=StatusEnum.NOT_ACCEPTED)
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("User", back_populates="orders")
+    map = relationship("Map", back_populates="orders")
     created_at = Column(DateTime, default=datetime.now)
 
     @classmethod

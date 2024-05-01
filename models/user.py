@@ -26,9 +26,6 @@ class User(Base):
     def get_user_by_phone_number(cls, db: Session, phone_number: str):
         return db.query(cls).filter(cls.phone_number == phone_number).first()
 
-#INSERT INTO users (last_name, first_name, middle_name, email, phone_number, birth_date, password)
-#VALUES ('Doe', 'John', 'Smith', 'john@example.com', '1234567890', '2000-01-01', 'hashed_password_here');
-
 
 
 # # Создание соединения с базой данных
