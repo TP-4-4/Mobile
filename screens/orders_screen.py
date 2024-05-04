@@ -34,7 +34,7 @@ class OrdersScreen(Screen):
                                   color=(0, 0, 0, 0.6))
 
             print('order.status == ', order.status)
-            if order.status == StatusEnum.COMPLETED:
+            if order.status == StatusEnum.COMPLETED or order.status == StatusEnum.CANCELED:
                 icon_move_button = 'img/next_gray.png'
             else:
                 icon_move_button = 'img/next.png'
