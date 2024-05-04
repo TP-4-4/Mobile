@@ -1,8 +1,16 @@
 import openrouteservice
 import polyline
+from kivy.clock import Clock, mainthread
 from kivy.uix.popup import Popup
 from kivy_garden.mapview import MapView, MapMarker
 from kivy_garden.mapview.geojson import GeoJsonMapLayer
+
+from models.map import Map
+from kivy.properties import StringProperty
+from plyer import gps
+
+gps_location = StringProperty()
+gps_status = StringProperty('Start')
 
 
 class MapBuilder:
@@ -55,16 +63,16 @@ class MapBuilder:
                 },
                 "geometry": {
                     "type": "LineString",
-                    "coordinates": route_coordinates[i:i+2]
+                    "coordinates": route_coordinates[i:i + 2]
                 }
             }
-            print(route_coordinates[i:i+2])
+            print(route_coordinates[i:i + 2])
 
             geojson_layer = GeoJsonMapLayer(geojson=geojson_data)
             map_view.add_layer(geojson_layer)
 
-    def update_route(self, map_view, route_coordinates, i):
-        longitude, latitude = route_coordinates[i]
+    def update_route(self, map_view, route_coordinate):
+        longitude, latitude = route_coordinate
         way_marker = MapMarker(lon=longitude, lat=latitude, source='img/delivery_marker.png')
 
         if hasattr(map_view, 'way_marker'):
@@ -74,10 +82,39 @@ class MapBuilder:
         map_view.add_widget(way_marker)
 
 
+    def request_android_permissions(self):
+         from android.permissions import request_permissions, Permission
+         request_permissions([Permission.ACCESS_COARSE_LOCATION,Permission.ACCESS_FINE_LOCATION])
 
+    def start_gps(self):
+        try:
+            gps.configure(on_location=self.on_location, on_status=self.on_status)
+            self.request_android_permissions()
+            gps.start()
+        except NotImplementedError:
+            self.gps_status = 'No equipment'
 
+    def on_location(self, **kwargs):
+        latitude = kwargs.get('lat')
+        longitude = kwargs.get('lon')
+        altitude = kwargs.get('altitude')
+        self.route_coordinate = [(latitude, longitude)]
 
+    def on_status(self, stype, status):
+        self.gps_status = 'type={}\n{}'.format(stype, status)
 
+    def open_map(self, map_view, db_session, order_id):
+        coord = Map.get_coord_by_id(db_session, order_id)
 
+        self.start_gps()
 
+        map_popup = self.create_map_popup()
+        map_view = self.create_map_with_route(coord.start_longitude, coord.start_latitude,
+                                              coord.end_longitude, coord.end_latitude)
+        map_popup.content = map_view
+        map_popup.open()
 
+        def update_map_content(dt):
+            self.update_route(map_view, self.route_coordinate)
+
+        Clock.schedule_interval(update_map_content, 2)
