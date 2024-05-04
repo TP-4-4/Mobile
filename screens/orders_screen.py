@@ -7,7 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDFillRoundFlatButton, MDIconButton
 
-from models.order import Order
+from models.order import Order, StatusEnum
 
 
 class OrdersScreen(Screen):
@@ -33,14 +33,21 @@ class OrdersScreen(Screen):
             address_label = Label(text=str(order.address), font_size='12sp', text_size=(150, None), font_name='styles/Montserrat-Bold.ttf',
                                   color=(0, 0, 0, 0.6))
 
+            print('order.status == ', order.status)
+            if order.status == StatusEnum.COMPLETED:
+                icon_move_button = 'img/next_gray.png'
+            else:
+                icon_move_button = 'img/next.png'
+
             move_button = MDIconButton(
-                icon='img/next.png',
+                icon=icon_move_button,
                 on_release=lambda btn, order_id=order.id: self.move_order(db_session, order_id),
                 user_font_size="10sp"
             )
 
+
+
             orders_layout.add_widget(order_number_label)
-            #orders_layout.add_widget(total_amount_label)
             orders_layout.add_widget(address_label)
             orders_layout.add_widget(move_button)
 

@@ -4,6 +4,7 @@ import openrouteservice
 from kivy.clock import Clock
 from kivy.core.image import Image as CoreImage, Image
 from kivy.lang import Builder
+from kivy.properties import ObjectProperty
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.screenmanager import Screen
 from kivy_garden.mapview import MapView, MapMarker
@@ -11,14 +12,29 @@ from kivy.uix.popup import Popup
 from kivy.uix.label import Label
 from kivy_garden.mapview.geojson import GeoJsonMapLayer
 from kivymd.uix.button import MDFillRoundFlatButton
-
+from kivy.app import App
 from models.map import Map
 from models.order import Order, StatusEnum
 import polyline
-from kivy.graphics import Line
+from kivy.graphics import Line, RoundedRectangle
 
+from screens import orders_screen
 from services.map import MapBuilder
 
+
+class CustomButton(MDFillRoundFlatButton):
+    background = ObjectProperty()
+
+    def __init__(self, **kwargs):
+        super(CustomButton, self).__init__(**kwargs)
+        with self.canvas.before:
+            self.background = RoundedRectangle(pos=self.pos, size=self.size)
+
+    def on_size(self, instance, value):
+        self.background.size = value
+
+    def on_pos(self, instance, value):
+        self.background.pos = value
 
 class OneOrderScreen(Screen):
     path_to_kv_file = './styles/style_for_one_order.kv'
@@ -28,6 +44,7 @@ class OneOrderScreen(Screen):
 
     def __init__(self, **kwargs):
         super(OneOrderScreen, self).__init__(**kwargs)
+        self.back_button = None
         self.map_builder = MapBuilder()
         self.load_kv()
         self.cancel_button = None
@@ -45,6 +62,13 @@ class OneOrderScreen(Screen):
         self.ids.name_client_label.text = 'Kate'
         self.ids.phone_number_client_label.text = '89518579473'
 
+        self.back_button = MDFillRoundFlatButton(text='Назад', size_hint=(None, None),
+                                                 font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
+                                                 md_bg_color=(1, 0.478, 0, 1),
+                                                 pos_hint={'right': 0.95, 'top': 0.97},)
+        self.back_button.bind(on_release=lambda instance: self.switch_to_orders_screen(db_session, order.user_id))
+        self.add_widget(self.back_button)
+
         if status == StatusEnum.COMPLETED:
             self.ids.completed.text = 'Заказ Завершён'
 
@@ -53,7 +77,8 @@ class OneOrderScreen(Screen):
 
 
         elif status == StatusEnum.NOT_ACCEPTED:
-            self.accept_button = MDFillRoundFlatButton(text='Принять', size_hint=(None, None), height='36dp',
+            self.accept_button = MDFillRoundFlatButton(text='Принять', size_hint=(None, None),
+                                                       font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                        md_bg_color=(1, 0.478, 0, 1),
                                                        pos_hint={'center_x': 0.5, 'top': 0.2})
             self.accept_button.bind(
@@ -62,6 +87,12 @@ class OneOrderScreen(Screen):
 
         elif status == StatusEnum.ACCEPTED:
             self.show_additional_buttons(db_session, order_id)
+
+    def switch_to_orders_screen(self, db_session, user_id):
+        orders_screen = self.manager.get_screen('orders_screen')
+        if orders_screen:
+            self.manager.current = 'orders_screen'
+            orders_screen.load_orders_data(db_session, user_id)
 
     def accept_order(self, db_session, order_id, accept_button):
         Order.change_status(db_session, order_id, StatusEnum.ACCEPTED)
