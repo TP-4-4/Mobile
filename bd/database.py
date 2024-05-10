@@ -5,11 +5,13 @@ from bd import host
 
 # Замените 'database_url' на вашу строку подключения к базе данных PostgreSQL
 DATABASE_URL = ('postgresql+pg8000://' + host.username + ':' + host.password
-                + '@' + host.hostname + '/' + host.database + '?ssl=true')
-# DATABASE_URL = 'postgresql://postgres:1234@localhost/delivery_man'
+                + '@' + host.hostname + '/' + host.database)
 
-# Создаем движок базы данных SQLAlchemy
-engine = create_engine(DATABASE_URL)
+# Создаем параметры SSL/TLS
+ssl_args = {'ssl': True}
+
+# Создаем движок базы данных SQLAlchemy с использованием URI-синтаксиса и параметров SSL/TLS
+engine = create_engine(DATABASE_URL, connect_args=ssl_args)
 
 # Создаем фабрику сессий SQLAlchemy
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
