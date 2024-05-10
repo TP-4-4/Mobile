@@ -1,4 +1,4 @@
-password = 'O1HRDUc9P7wNI4eH6qirAuK3VDKXwlQG'
+password = 'vXS5hsAdlIoyF6AV0xWffEQi0wINvipS'
 username = 'k8lobova'
-hostname = 'dpg-cor7q57sc6pc73dkpmug-a.oregon-postgres.render.com'
-database = 'delivery_man'
+hostname = 'dpg-covag1i1hbls73dnb200-a.oregon-postgres.render.com'
+database = 'delivery_man_zxoq'
