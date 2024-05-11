@@ -3,7 +3,7 @@ import polyline
 from kivy.uix.popup import Popup
 from kivy_garden.mapview import MapView, MapMarker
 from kivy_garden.mapview.geojson import GeoJsonMapLayer
-
+from kivy.core.window import Window
 
 class MapBuilder:
     def __init__(self):
@@ -12,10 +12,14 @@ class MapBuilder:
         self.map_popup = None
 
     def create_map_popup(self):
+        screen_width, screen_height = Window.size
+        popup_width = min(screen_width * 0.9, 400)
+        popup_height = min(screen_height * 0.9, 500)
+
         self.map_popup = Popup(
             title='Карта',
             size_hint=(None, None),
-            size=(400, 500),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1],
         )
