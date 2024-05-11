@@ -1,20 +1,27 @@
+import ssl
+
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 from bd import host
+ssl_context = ssl.create_default_context()
+DATABASE_URL = f'postgresql+pg8000://{host.username}:{host.password}@{host.hostname}/{host.database}'
+engine = create_engine(DATABASE_URL, connect_args={"ssl_context": ssl_context})
 
-# Замените 'database_url' на вашу строку подключения к базе данных PostgreSQL
-DATABASE_URL = ('postgresql+pg8000://' + host.username + ':' + host.password
-                + '@' + host.hostname + '/' + host.database)
-
-# Создаем параметры SSL/TLS
-ssl_args = {'ssl': True}
-
-# Создаем движок базы данных SQLAlchemy с использованием URI-синтаксиса и параметров SSL/TLS
-engine = create_engine(DATABASE_URL, connect_args=ssl_args)
 
 # Создаем фабрику сессий SQLAlchemy
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Создаем базовый класс для всех моделей
 Base = declarative_base()
+
+# # Укажите свои параметры подключения
+# conn = pg8000.connect(
+#     user=host.username,
+#     password=host.password,
+#     host=host.hostname,
+#     database=host.database,
+#     port=5432,
+#     ssl=ssl.create_default_context()
+# )
+#
