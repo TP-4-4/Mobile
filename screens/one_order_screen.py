@@ -1,5 +1,5 @@
 import time
-
+from kivy.core.window import Window
 import openrouteservice
 from kivy.clock import Clock
 from kivy.core.image import Image as CoreImage, Image
@@ -126,12 +126,15 @@ class OneOrderScreen(Screen):
             self.add_widget(self.finish_button)
 
     def cancel_order(self, db_session, order_id):
+        screen_width, screen_height = Window.size
+        popup_width = min(screen_width * 0.9, 350)
+        popup_height = min(screen_height * 0.9, 180)
 
         confirmation_popup = Popup(
             title='     Подтверждение отмены заказа',
             content=Label(text='Вы уверены, что хотите отменить заказ?'),
             size_hint=(None, None),
-            size=(350, 180),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1]
         )
