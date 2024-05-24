@@ -1,9 +1,9 @@
 database:
   database: delivery_man_zxoq
   username: k8lobova
-  password: vXS5hsAdlIoyF6AV0xWffEQi0wINvipS
+  password: ...
   host: dpg-covag1i1hbls73dnb200-a.oregon-postgres.render.com
 
 api:
-  key: 5b3ce3597851110001cf624860bbe2ce295c433185dd45a4f3e1ae18
+  key: ...
 
