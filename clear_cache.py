@@ -24,8 +24,3 @@ def clear_cache_folder():
     except Exception as e:
         print(f"Произошла ошибка при удалении файлов из папки cache: {e}")
 
-
-# Запускаем функцию каждый час
-while True:
-    clear_cache_folder()
-    time.sleep(3600*4)  # Подождать 1 час (3600 секунд)
