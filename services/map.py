@@ -1,21 +1,41 @@
 import openrouteservice
 import polyline
+import yaml
+from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy_garden.mapview import MapView, MapMarker
 from kivy_garden.mapview.geojson import GeoJsonMapLayer
+from kivy.core.window import Window
+from plyer import gps
+from kivy.uix.label import Label
 
+with open('config.yaml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
 
 class MapBuilder:
     def __init__(self):
-        self.api_key = "5b3ce3597851110001cf624860bbe2ce295c433185dd45a4f3e1ae18"
+        self.api_key = f'{config["api"]["key"]}'
         self.current_zoom = 12
         self.map_popup = None
+        self.route_coordinate = []
+        self.gps_started = False
+        self.gps_status = 'provider-disabled'
+        self.gps_popup = None
+        self.gps_check_started = False
+        self.route_coordinate_updated = False
+        self.check_stat = None
 
     def create_map_popup(self):
+        window_width, window_height = Window.size
+
+        popup_width = window_width * 0.9
+        popup_height = window_height * 0.8
         self.map_popup = Popup(
             title='Карта',
+            title_font='styles/Montserrat-ExtraBold.ttf',
+            title_align='center',
             size_hint=(None, None),
-            size=(400, 500),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1],
         )
@@ -55,29 +75,121 @@ class MapBuilder:
                 },
                 "geometry": {
                     "type": "LineString",
-                    "coordinates": route_coordinates[i:i+2]
+                    "coordinates": route_coordinates[i:i + 2]
                 }
             }
-            print(route_coordinates[i:i+2])
+            print(route_coordinates[i:i + 2])
 
             geojson_layer = GeoJsonMapLayer(geojson=geojson_data)
             map_view.add_layer(geojson_layer)
 
-    def update_route(self, map_view, route_coordinates, i):
-        longitude, latitude = route_coordinates[i]
-        way_marker = MapMarker(lon=longitude, lat=latitude, source='img/delivery_marker.png')
+    def update_route(self, map_view):
 
-        if hasattr(map_view, 'way_marker'):
-            map_view.remove_widget(map_view.way_marker)
+        print('GPS ROUTES', self.route_coordinate)
+        if self.route_coordinate_updated:
+            latitude, longitude = self.route_coordinate
+            way_marker = MapMarker(lon=longitude, lat=latitude, source='img/delivery_marker.png')
+            if hasattr(map_view, 'way_marker'):
+                map_view.remove_widget(map_view.way_marker)
+            map_view.way_marker = way_marker
+            map_view.add_widget(way_marker)
+            self.route_coordinate_updated = False
 
-        map_view.way_marker = way_marker
-        map_view.add_widget(way_marker)
+    def request_android_permissions(self):
+        from android.permissions import request_permissions, Permission
+        def callback(permission, results):
+            if all([res for res in results]):
+                print('Got All Permissions')
+            else:
+                print('Did Not Get All Permissions')
+
+        request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
+
+    def start_gps(self):
+        if not self.gps_started:
+            try:
+                self.request_android_permissions()
+                gps.configure(on_location=self.on_gps_location, on_status=self.on_auth_status)
+                gps.start(minTime=1000, minDistance=0)
+                print('gps started')
+                self.gps_started = True
+
+            except NotImplementedError:
+                self.gps_status = 'No equipment'
+
+    def check_gps(self):
+        gps.configure(on_location=self.on_gps_location, on_status=self.on_auth_status)
+        gps.start(minTime=1000, minDistance=0)
+
+    def start_gps_status_check(self):
+        if not self.gps_check_started:
+            self.check_stat = Clock.schedule_interval(self.check_gps_status, 2)
+            self.gps_check_started = True
+
+    def stop_gps(self):
+        if self.gps_started:
+            gps.stop()
+            self.gps_started = False
+            self.gps_check_started = False
+            print('gps stopped')
+
+    def on_gps_location(self, **kwargs):
+        self.gps_status = 'provider-enabled'
+        latitude = kwargs['lat']
+        longitude = kwargs['lon']
+        print('GPS POSITION', latitude, longitude)
+        self.route_coordinate = [latitude, longitude]
+        self.route_coordinate_updated = True
 
 
+    def on_auth_status(self, general_status, status_message):
+        print('on_auth_status = ', general_status, status_message)
+        if status_message == 'gps':
+            self.gps_status = general_status
+        if general_status == 'provider-disabled' and status_message == 'gps':
+            self.start_gps_status_check()
 
+    def open_gps_access_popup(self):
+        window_width, window_height = Window.size
 
+        popup_width = window_width * 0.75
+        popup_height = window_height * 0.2
 
+        content = Label(
+            text='You need to enable GPS access for the app to function properly',
+            text_size=(popup_width * 0.9, None),
+            halign='center',
+            valign='middle',
+            padding=(10, 10)
+        )
 
+        self.gps_popup = Popup(
+            title='GPS Error',
+            title_font='styles/Montserrat-ExtraBold.ttf',
+            title_align='center',
+            content=content,
+            size_hint=(None, None),
+            size=(popup_width, popup_height),
+            separator_color=[1, 0.478, 0, 1],
+            background_color=[4, .4, .2, 1]
+        )
+        self.gps_popup.bind(on_dismiss=self.reset_gps_popup)
+        self.gps_popup.open()
 
+    def reset_gps_popup(self, *args):
+        self.gps_popup = None
 
+    def check_gps_status(self, *args):
+        status = self.gps_status
+        print('status = ', status)
+        if status == 'provider-disabled':
+            self.check_gps()
+            if self.gps_popup is None:
+                self.open_gps_access_popup()
+        else:
+            Clock.unschedule(self.check_stat)
+            self.gps_check_started = False
+            self.check_gps()
+            if self.gps_popup:
+                self.gps_popup.dismiss()
 

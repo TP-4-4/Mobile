@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Enum as EnumColumn
+from sqlalchemy import Enum as EnumColumn, func
 
 from sqlalchemy import ForeignKey, Float, DateTime
 from sqlalchemy.orm import relationship, Session
@@ -36,8 +36,9 @@ class Order(Base):
         order = db.query(cls).get(order_id)
         return order
 
-    def change_status(db: Session, order_id: int, new_status: StatusEnum):
-        order = db.query(Order).filter(Order.id == order_id).first()
+    @classmethod
+    def change_status(cls, db: Session, order_id: int, new_status: StatusEnum):
+        order = db.query(cls).filter(cls.id == order_id).first()
         if order:
             order.status = new_status
             db.commit()
@@ -45,38 +46,8 @@ class Order(Base):
         else:
             print("Order not found")
 
-#
-# # Создание соединения с базой данных
-# engine = create_engine('postgresql://postgres:1234@localhost/deliveryman')
-# Base.metadata.create_all(engine)
-#
-# # Создание сессии
-# Session = sessionmaker(bind=engine)
-# session = Session()
-#
-# # Обновляем связи с пользователем
-# User.orders = relationship("Order", back_populates="user")
-#
-# # Создание нового заказа
-# new_order = Order(
-#     order_number='123456',
-#     address='123 Main St, City, Country',
-#     total_amount=100.0,
-#     is_accepted=False,
-#     is_delivered=False,
-#     user_id=1  # ID пользователя, к которому относится этот заказ
-# )
-# INSERT INTO table_name (order_number, address, total_amount, is_accepted, is_delivered, user_id)
-# VALUES ('123456', '123 Main St, City, Country', 100.0, FALSE, FALSE, 2);
+    @classmethod
+    def count_accepted_orders(cls, db: Session):
+        count = db.query(func.count(cls.id)).filter(cls.status == StatusEnum.ACCEPTED).scalar()
+        return count
 
-
-#
-# # Добавляем заказ в сессию и сохраняем его в базе данных
-# session.add(new_order)
-# session.commit()
-#
-# # Получение данных о заказах для конкретного пользователя
-# user_orders = session.query(Order).filter_by(user_id=1).all()
-# for order in user_orders:
-#     print(order.order_number, order.address, order.total_amount, order.is_accepted, order.is_delivered)
-#

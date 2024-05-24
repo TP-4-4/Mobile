@@ -6,13 +6,13 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 
 from bd.database import SessionLocal
+from clear_cache import clear_cache_folder
 from models.order import Order
 from screens.login_screen import LoginScreen
 from screens.one_order_screen import OneOrderScreen
 from screens.profile_screen import ProfileScreen
 from screens.orders_screen import OrdersScreen
-
-
+from services.map import MapBuilder
 
 kv = '''
 #:import KivyLexer kivy.extras.highlight.KivyLexer
@@ -47,27 +47,27 @@ class MyApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # Создание объекта сессии и передача его в приложение
         self.db_session = SessionLocal()
+        self.map_builder = MapBuilder()
+        self.icon = 'img/icon.png'
 
     def build(self):
         self.root = WindowManager()  # Set WindowManager as the root
         Window.size = (1080 / 3, 2000 / 3)
-        # Window.fullscreen = 'auto'
+
         self.root.add_widget(OrdersScreen(name='orders_screen'))
         self.root.add_widget(OneOrderScreen(name='one_order_screen'))
         self.root.add_widget(LoginScreen(name='login_screen'))
         self.root.add_widget(ProfileScreen(name='profile_screen'))
 
+
         return Builder.load_file('styles/style_for_main.kv')
 
-    # def change_order_status(self, order_id: int, new_status: str):
-    #     Order.change_status(self.db_session, order_id, new_status)
 
     def submit_login_data(self, phone_number, password):
         login_screen = self.root.get_screen('login_screen')
         if login_screen:
-            login_screen.submit_data(self.db_session, phone_number, password)
+            login_screen.submit_data(self.db_session, phone_number, password, self.map_builder)
 
 
 
@@ -81,11 +81,14 @@ def encrypt_password(password):
 
 
 if __name__ == '__main__':
+    clear_cache_folder()
     password = '1'
     encrypted_password = encrypt_password(password)
     print("Зашифрованный пароль:", encrypted_password)
     #  Зашифрованный пароль: b'$2b$12$6pVGF6spEu7C5JSOC56Bguf35EWNpAqiip6Z2wUH7ES3o3/hKfW66'
     app = MyApp()
     app.run()
+
+
 
 
