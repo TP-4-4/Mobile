@@ -4,6 +4,7 @@ from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy_garden.mapview import MapView, MapMarker
 from kivy_garden.mapview.geojson import GeoJsonMapLayer
+from kivy.core.window import Window
 from plyer import gps
 from kivy.uix.label import Label
 
@@ -22,12 +23,16 @@ class MapBuilder:
         self.check_stat = None
 
     def create_map_popup(self):
+        window_width, window_height = Window.size
+
+        popup_width = window_width * 0.9
+        popup_height = window_height * 0.8
         self.map_popup = Popup(
             title='Карта',
             title_font='styles/Montserrat-ExtraBold.ttf',
             title_align='center',
             size_hint=(None, None),
-            size=(200, 300),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1],
         )
@@ -142,10 +147,14 @@ class MapBuilder:
             self.start_gps_status_check()
 
     def open_gps_access_popup(self):
+        window_width, window_height = Window.size
+
+        popup_width = window_width * 0.75
+        popup_height = window_height * 0.2
 
         content = Label(
             text='You need to enable GPS access for the app to function properly',
-            text_size=(100, None),
+            text_size=(popup_width * 0.9, None),
             halign='center',
             valign='middle',
             padding=(10, 10)
@@ -157,7 +166,7 @@ class MapBuilder:
             title_align='center',
             content=content,
             size_hint=(None, None),
-            size=(200, 300),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1]
         )
@@ -180,5 +189,4 @@ class MapBuilder:
             self.check_gps()
             if self.gps_popup:
                 self.gps_popup.dismiss()
-
 

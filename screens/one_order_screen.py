@@ -98,7 +98,6 @@ class OneOrderScreen(Screen):
         if accepted_orders_count > 0:
             if not self.map_builder.gps_started:
                 self.map_builder.start_gps()
-                print("from accept_order Accepted: ", accepted_orders_count)
             if not self.map_builder.gps_check_started:
                 self.map_builder.start_gps_status_check()
         else:
@@ -134,13 +133,17 @@ class OneOrderScreen(Screen):
             self.add_widget(self.finish_button)
 
     def cancel_order(self, db_session, order_id):
+        window_width, window_height = Window.size
+
+        popup_width = window_width * 0.75
+        popup_height = window_height * 0.2
 
         confirmation_popup = Popup(
             title='Подтверждение отмены заказа',
             title_font='styles/Montserrat-ExtraBold.ttf',
             title_align='center',
             size_hint=(None, None),
-            size=(200, 300),
+            size=(popup_width, popup_height),
             separator_color=[1, 0.478, 0, 1],
             background_color=[4, .4, .2, 1]
         )
@@ -160,7 +163,7 @@ class OneOrderScreen(Screen):
         cancel_layout = AnchorLayout(anchor_x='right', anchor_y='center')
         cancel_layout.add_widget(cancel_button)
 
-        buttons_layout = GridLayout(cols=2, padding=100)
+        buttons_layout = GridLayout(cols=2, padding=popup_width/10)
         buttons_layout.add_widget(confirm_layout)
         buttons_layout.add_widget(cancel_layout)
 
@@ -201,7 +204,6 @@ class OneOrderScreen(Screen):
         map_popup.bind(on_dismiss=lambda *args: Clock.unschedule(update_event))
 
         map_popup.open()
-
     def finish_order(self, db_session, order_id):
         Order.change_status(db_session, order_id, StatusEnum.COMPLETED)
 
