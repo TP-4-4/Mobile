@@ -1,5 +1,6 @@
 import openrouteservice
 import polyline
+import yaml
 from kivy.clock import Clock
 from kivy.uix.popup import Popup
 from kivy_garden.mapview import MapView, MapMarker
@@ -8,10 +9,12 @@ from kivy.core.window import Window
 from plyer import gps
 from kivy.uix.label import Label
 
+with open('config.yaml', 'r') as config_file:
+    config = yaml.safe_load(config_file)
 
 class MapBuilder:
     def __init__(self):
-        self.api_key = "5b3ce3597851110001cf624860bbe2ce295c433185dd45a4f3e1ae18"
+        self.api_key = f'{config["api"]["key"]}'
         self.current_zoom = 12
         self.map_popup = None
         self.route_coordinate = []
