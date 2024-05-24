@@ -6,6 +6,7 @@ from kivy.lang import Builder
 from kivy.core.window import Window
 
 from bd.database import SessionLocal
+from clear_cache import clear_cache_folder
 from models.order import Order
 from screens.login_screen import LoginScreen
 from screens.one_order_screen import OneOrderScreen
@@ -79,6 +80,7 @@ def encrypt_password(password):
 
 
 if __name__ == '__main__':
+    clear_cache_folder()
     password = '1'
     encrypted_password = encrypt_password(password)
     print("Зашифрованный пароль:", encrypted_password)
