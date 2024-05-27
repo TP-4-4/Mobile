@@ -105,7 +105,7 @@ class MapBuilder:
             else:
                 print('Did Not Get All Permissions')
 
-       request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
+        request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
 
     def start_gps(self):
         if not self.gps_started:
