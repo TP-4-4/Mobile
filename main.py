@@ -53,7 +53,7 @@ class MyApp(MDApp):
 
     def build(self):
         self.root = WindowManager()  # Set WindowManager as the root
-        Window.size = (1080 / 3, 2000 / 3)
+        Window.fullscreen = 'auto'
 
         self.root.add_widget(OrdersScreen(name='orders_screen'))
         self.root.add_widget(OneOrderScreen(name='one_order_screen'))
