@@ -30,6 +30,12 @@ class OrdersScreen(Screen):
         orders_layout = self.ids.orders_layout
         orders_layout.clear_widgets()
 
+        orders = sorted(orders, key=lambda x: (x.status != StatusEnum.ACCEPTED,
+                                               x.status != StatusEnum.NOT_ACCEPTED,
+                                               x.status != StatusEnum.CANCELED,
+                                               x.status != StatusEnum.COMPLETED,
+                                               x.created_at))
+
         for index, order in enumerate(orders):
             order_number_label = MyLabel(text=str(order.order_number), font_size='18sp', text_size=(100, None), font_name='styles/Montserrat-ExtraBold.ttf',
                                        color=(1, 0.478, 0, 1), halign='left', valign='middle')

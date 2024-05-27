@@ -144,8 +144,10 @@ class OneOrderScreen(Screen):
             title_align='center',
             size_hint=(None, None),
             size=(popup_width, popup_height),
-            separator_color=[1, 0.478, 0, 1],
-            background_color=[4, .4, .2, 1]
+            separator_color=[1, 1, 1, 1],
+            background_color=[255, 255, 255, 1],
+            title_color=[1, 0.478, 0, 1],
+            overlay_color=[1, 0.478, 0, 0.41],
         )
 
         confirm_button = MDFillRoundFlatButton(text='Да', font_name='styles/Montserrat-ExtraBold.ttf',
@@ -204,7 +206,9 @@ class OneOrderScreen(Screen):
         map_popup.bind(on_dismiss=lambda *args: Clock.unschedule(update_event))
 
         map_popup.open()
-    def finish_order(self, db_session, order_id):
+
+    def confirm_finish_order(self, db_session, order_id, popup):
+        popup.dismiss()
         Order.change_status(db_session, order_id, StatusEnum.COMPLETED)
 
         accepted_orders_count = Order.count_accepted_orders(db_session)
@@ -218,6 +222,47 @@ class OneOrderScreen(Screen):
 
         self.remove_buttons()
         self.ids.completed.text = 'Заказ Завершён'
+
+    def finish_order(self, db_session, order_id):
+        window_width, window_height = Window.size
+
+        popup_width = window_width * 0.75
+        popup_height = window_height * 0.2
+
+        confirmation_popup = Popup(
+            title='Подтверждение завершения заказа',
+            title_font='styles/Montserrat-ExtraBold.ttf',
+            title_align='center',
+            size_hint=(None, None),
+            size=(popup_width, popup_height),
+            separator_color=[1, 1, 1, 1],
+            background_color=[255, 255, 255, 1],
+            title_color=[1, 0.478, 0, 1],
+            overlay_color=[1, 0.478, 0, 0.41],
+        )
+
+        confirm_button = MDFillRoundFlatButton(text='Да', font_name='styles/Montserrat-ExtraBold.ttf',
+                                               md_bg_color=(1, 0.478, 0, 1), size_hint_x=None)
+        confirm_button.bind(
+            on_release=lambda instance: self.confirm_finish_order(db_session, order_id, confirmation_popup))
+
+        cancel_button = MDFillRoundFlatButton(text='Нет', font_name='styles/Montserrat-ExtraBold.ttf',
+                                              md_bg_color=(1, 0.478, 0, 1))
+        cancel_button.bind(on_release=confirmation_popup.dismiss)
+
+        confirm_layout = AnchorLayout(anchor_x='left', anchor_y='center')
+        confirm_layout.add_widget(confirm_button)
+
+        cancel_layout = AnchorLayout(anchor_x='right', anchor_y='center')
+        cancel_layout.add_widget(cancel_button)
+
+        buttons_layout = GridLayout(cols=2, padding=popup_width/10)
+        buttons_layout.add_widget(confirm_layout)
+        buttons_layout.add_widget(cancel_layout)
+
+        confirmation_popup.content = buttons_layout
+
+        confirmation_popup.open()
 
     def remove_buttons(self):
         if self.accept_button:

@@ -36,8 +36,10 @@ class MapBuilder:
             title_align='center',
             size_hint=(None, None),
             size=(popup_width, popup_height),
-            separator_color=[1, 0.478, 0, 1],
-            background_color=[4, .4, .2, 1],
+            separator_color=[1, 1, 1, 1],
+            background_color=[255, 255, 255, 1],
+            title_color=[1, 0.478, 0, 1],
+            overlay_color=[1, 0.478, 0, 0.41],
         )
         return self.map_popup
 
@@ -103,7 +105,7 @@ class MapBuilder:
             else:
                 print('Did Not Get All Permissions')
 
-        request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
+       request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
 
     def start_gps(self):
         if not self.gps_started:
