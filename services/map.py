@@ -1,4 +1,5 @@
-import json
+import tempfile
+import threading
 
 import openrouteservice
 import polyline
@@ -11,10 +12,20 @@ from kivy.core.window import Window
 from plyer import gps
 from kivy.uix.label import Label
 from kafka import KafkaProducer
-from kafka import KafkaConsumer
+import requests
 
 with open('config.yaml', 'r') as config_file:
     config = yaml.safe_load(config_file)
+
+url = "https://storage.yandexcloud.net/cloud-certs/CA.pem"
+response = requests.get(url)
+if response.status_code == 200:
+    cert_data = response.content.decode('utf-8')
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".crt") as temp_cert_file:
+        temp_cert_file.write(cert_data.encode('utf-8'))
+        temp_cert_path = temp_cert_file.name
+else:
+    print("Ошибка при загрузке файла:", response.status_code)
 
 class MapBuilder:
     def __init__(self):
@@ -144,14 +155,11 @@ class MapBuilder:
         latitude = kwargs['lat']
         longitude = kwargs['lon']
         print('GPS POSITION', latitude, longitude)
-        self.route_coordinate = [latitude, latitude]
+        self.route_coordinate = [latitude, longitude]
         self.route_coordinate_updated = True
-        data = {"latitude": latitude, "longitude": latitude}
-        serialized_data = json.dumps(data)
-        serialized_data = f"{latitude},{longitude}"
-        self.send_serialized_data_to_kafka(serialized_data)
-        self.get_data_from_kafka()
-
+        serialized_data = f"{latitude} {longitude}"
+        kafka_thread = threading.Thread(target=self.send_serialized_data_to_kafka, args=(serialized_data,))
+        kafka_thread.start()
 
     def on_auth_status(self, general_status, status_message):
         print('on_auth_status = ', general_status, status_message)
@@ -207,31 +215,13 @@ class MapBuilder:
 
     def send_serialized_data_to_kafka(self, serialized_data):
         producer = KafkaProducer(
-            bootstrap_servers=['rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091','rc1b-8kvb7n4m4aql8c9f.mdb.yandexcloud.net:9091','rc1d-nmfkkgq12lhnfm0p.mdb.yandexcloud.net:9091'],
+            bootstrap_servers='rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091',
             security_protocol="SASL_SSL",
             sasl_mechanism="SCRAM-SHA-512",
             sasl_plain_username='write',
             sasl_plain_password='k8lobova',
-            ssl_cafile="/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt")
-
+            ssl_cafile=temp_cert_path)
         producer.send('coordinates', serialized_data.encode('utf-8'), b'coord')
         producer.flush()
         producer.close()
-
-    def get_data_from_kafka(self):
-        consumer = KafkaConsumer(
-            'coordinates',
-            bootstrap_servers=['rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091',
-                               'rc1b-8kvb7n4m4aql8c9f.mdb.yandexcloud.net:9091',
-                               'rc1d-nmfkkgq12lhnfm0p.mdb.yandexcloud.net:9091'],
-            security_protocol="SASL_SSL",
-            sasl_mechanism="SCRAM-SHA-512",
-            sasl_plain_username='read',
-            sasl_plain_password='k8lobova',
-            ssl_cafile="/usr/local/share/ca-certificates/Yandex/YandexInternalRootCA.crt")
-
-        print("ready")
-
-        for msg in consumer:
-            print(msg.key.decode("utf-8") + ":" + msg.value.decode("utf-8"))
 
