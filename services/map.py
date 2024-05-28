@@ -220,7 +220,9 @@ class MapBuilder:
 
     def send_serialized_data_to_kafka(self, serialized_data):
         producer = KafkaProducer(
-            bootstrap_servers='rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091',
+            bootstrap_servers=['rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091',
+                               'rc1b-8kvb7n4m4aql8c9f.mdb.yandexcloud.net:9091',
+                               'rc1d-nmfkkgq12lhnfm0p.mdb.yandexcloud.net:9091'],
             security_protocol="SASL_SSL",
             sasl_mechanism="SCRAM-SHA-512",
             sasl_plain_username='write',
