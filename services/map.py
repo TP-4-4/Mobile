@@ -179,7 +179,10 @@ class MapBuilder:
             text_size=(popup_width * 0.9, None),
             halign='center',
             valign='middle',
-            padding=(10, 10)
+            padding=(10, 10),
+            color=[1, 0.478, 0, 1],
+            font_name='styles/Montserrat-Bold.ttf',
+            font_size='12sp',
         )
 
         self.gps_popup = Popup(
@@ -189,8 +192,10 @@ class MapBuilder:
             content=content,
             size_hint=(None, None),
             size=(popup_width, popup_height),
-            separator_color=[1, 0.478, 0, 1],
-            background_color=[4, .4, .2, 1]
+            separator_color=[1, 1, 1, 1],
+            background_color=[255, 255, 255, 1],
+            title_color=[1, 0.478, 0, 1],
+            overlay_color=[1, 0.478, 0, 0.41],
         )
         self.gps_popup.bind(on_dismiss=self.reset_gps_popup)
         self.gps_popup.open()
