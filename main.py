@@ -51,6 +51,18 @@ class MyApp(MDApp):
         self.map_builder = MapBuilder()
         self.icon = 'img/icon.png'
 
+    def on_pause(self):
+        # This method is called when the application is paused.
+        # Returning True indicates that the app can be paused.
+        print("Application is pausing...")
+        self.map_builder.start_background_service()
+        return True
+
+    def on_resume(self):
+        # This method is called when the application is resumed.
+        print("Application is resuming...")
+        self.map_builder.stop_background_service()
+
     def build(self):
         self.root = WindowManager()  # Set WindowManager as the root
         Window.fullscreen = 'auto'

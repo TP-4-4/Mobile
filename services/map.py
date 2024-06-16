@@ -13,6 +13,8 @@ from plyer import gps
 from kivy.uix.label import Label
 from kafka import KafkaProducer
 import requests
+from jnius import autoclass, cast
+from android.runnable import run_on_ui_thread
 
 with open('config.yaml', 'r') as config_file:
     config = yaml.safe_load(config_file)
@@ -120,27 +122,38 @@ class MapBuilder:
             else:
                 print('Did Not Get All Permissions')
 
-        request_permissions([Permission.ACCESS_FINE_LOCATION, Permission.ACCESS_COARSE_LOCATION], callback)
+        permissions_to_request = [
+            Permission.ACCESS_FINE_LOCATION,
+            Permission.ACCESS_COARSE_LOCATION,
+            Permission.WAKE_LOCK,
+            Permission.INTERNET
+        ]
 
-    def start_gps(self):
+        request_permissions(permissions_to_request, callback)
+
+    def start_gps(self, user_id):
         if not self.gps_started:
             try:
                 self.request_android_permissions()
-                gps.configure(on_location=self.on_gps_location, on_status=self.on_auth_status)
-                gps.start(minTime=1000, minDistance=0)
+                gps.configure(on_location=lambda **kwargs: self.on_gps_location(user_id, **kwargs),
+                              on_status=lambda general, status, message: self.on_auth_status(general, message, user_id))
+
+                gps.start(minTime=5000, minDistance=0)
                 print('gps started')
+                self.start_background_service()
                 self.gps_started = True
 
             except NotImplementedError:
                 self.gps_status = 'No equipment'
 
-    def check_gps(self):
-        gps.configure(on_location=self.on_gps_location, on_status=self.on_auth_status)
-        gps.start(minTime=1000, minDistance=0)
+    def check_gps(self, user_id):
+        gps.configure(on_location=lambda **kwargs: self.on_gps_location(user_id, **kwargs),
+                      on_status=lambda general, status, message: self.on_auth_status(general, message, user_id))
+        gps.start(minTime=5000, minDistance=0)
 
-    def start_gps_status_check(self):
+    def start_gps_status_check(self, user_id):
         if not self.gps_check_started:
-            self.check_stat = Clock.schedule_interval(self.check_gps_status, 2)
+            self.check_stat = Clock.schedule_interval(lambda dt: self.check_gps_status(user_id), 2)
             self.gps_check_started = True
 
     def stop_gps(self):
@@ -149,24 +162,26 @@ class MapBuilder:
             self.gps_started = False
             self.gps_check_started = False
             print('gps stopped')
+            self.stop_background_service()
 
-    def on_gps_location(self, **kwargs):
+    def on_gps_location(self, user_id, **kwargs):
         self.gps_status = 'provider-enabled'
         latitude = kwargs['lat']
         longitude = kwargs['lon']
         print('GPS POSITION', latitude, longitude)
         self.route_coordinate = [latitude, longitude]
         self.route_coordinate_updated = True
-        serialized_data = f"{latitude} {longitude}"
+        #serialized_data = f"{latitude} {longitude}"
+        serialized_data = f"{user_id} {latitude} {longitude}"
         kafka_thread = threading.Thread(target=self.send_serialized_data_to_kafka, args=(serialized_data,))
         kafka_thread.start()
 
-    def on_auth_status(self, general_status, status_message):
+    def on_auth_status(self, general_status, status_message, user_id):
         print('on_auth_status = ', general_status, status_message)
         if status_message == 'gps':
             self.gps_status = general_status
         if general_status == 'provider-disabled' and status_message == 'gps':
-            self.start_gps_status_check()
+            self.start_gps_status_check(user_id)
 
     def open_gps_access_popup(self):
         window_width, window_height = Window.size
@@ -203,22 +218,66 @@ class MapBuilder:
     def reset_gps_popup(self, *args):
         self.gps_popup = None
 
-    def check_gps_status(self, *args):
+    def check_gps_status(self, user_id, *args):
         status = self.gps_status
         print('status = ', status)
         if status == 'provider-disabled':
-            self.check_gps()
+            self.check_gps(user_id)
             if self.gps_popup is None:
                 self.open_gps_access_popup()
         else:
             Clock.unschedule(self.check_stat)
             self.gps_check_started = False
-            self.check_gps()
+            self.check_gps(user_id)
             if self.gps_popup:
                 self.gps_popup.dismiss()
 
+    def start_background_service(self):
+        try:
+            service_class = autoclass('org.kivy.android.PythonService')
+            service = service_class.mService
+
+            # Check if service is None
+            if service is None:
+                print("Service instance is None")
+                return
+
+            # Check if service has startForeground method
+            if not hasattr(service, 'startForeground'):
+                print("Service does not have startForeground method")
+                return
+
+            # Start foreground service
+            service.startForeground()
+            print("Foreground service started")
+
+        except Exception as e:
+            print(f"Error starting background service: {e}")
+
+    def stop_background_service(self):
+        try:
+            service_class = autoclass('org.kivy.android.PythonService')
+            service = service_class.mService
+
+            # Check if service is None
+            if service is None:
+                print("Service instance is None")
+                return
+
+            # Check if service has stopForeground method
+            if not hasattr(service, 'stopForeground'):
+                print("Service does not have stopForeground method")
+                return
+
+            # Stop foreground service
+            service.stopForeground()
+            print("Foreground service stopped")
+
+        except Exception as e:
+            print(f"Error stopping background service: {e}")
 
     def send_serialized_data_to_kafka(self, serialized_data):
+        self.start_background_service()
         producer = KafkaProducer(
             bootstrap_servers=['rc1a-clts7qbo7ml5kl80.mdb.yandexcloud.net:9091',
                                'rc1b-8kvb7n4m4aql8c9f.mdb.yandexcloud.net:9091',
@@ -231,4 +290,5 @@ class MapBuilder:
         producer.send('coordinates', serialized_data.encode('utf-8'), b'coord')
         producer.flush()
         producer.close()
+        self.stop_background_service()
 

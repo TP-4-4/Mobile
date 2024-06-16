@@ -41,7 +41,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy==2.3.0,docutils,pygments,pypiwin32,bcrypt,sqlalchemy,datetime,openrouteservice,kivymd==0.104.2,polyline,sh,packaging,colorama,pyyaml,appdirs,kivy_garden.mapview,pg8000==1.16.5,python-dateutil,scramp,asn1crypto,pillow,certifi,plyer,kafka-python,json,android,https://github.com/HyTurtle/plyer/archive/master.zip
+requirements = python3,kivy==2.3.0,docutils,pygments,pypiwin32,bcrypt,sqlalchemy,datetime,openrouteservice,kivymd==0.104.2,polyline,sh,packaging,colorama,pyyaml,appdirs,kivy_garden.mapview,pg8000==1.16.5,python-dateutil,scramp,asn1crypto,pillow,certifi,plyer,kafka-python,android,https://github.com/HyTurtle/plyer/archive/master.zip
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -65,7 +65,7 @@ orientation = portrait
 # ":foreground:sticky" for sticky foreground services. The default is a background service.
 # Bound services are not supported.
 #services = NAME:ENTRYPOINT_TO_PY,NAME2:ENTRYPOINT2_TO_PY
-
+services = myservice:services/main.py
 #
 # OSX Specific
 #
@@ -100,9 +100,9 @@ android.presplash_color = white
 #icon.adaptive_foreground.filename = %(source.dir)s/data/icon_fg.png
 #icon.adaptive_background.filename = %(source.dir)s/data/icon_bg.png
 
-# (list) Permissions
+# (list) Permissions  FOREGROUND_SERVICE, ACCESS_BACKGROUND_LOCATION,
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions.html for all the supported syntaxes and properties)
-android.permissions = android.permission.INTERNET, ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, FOREGROUND_SERVICE
+android.permissions = ACCESS_FINE_LOCATION, ACCESS_COARSE_LOCATION, WAKE_LOCK, INTERNET
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
@@ -160,7 +160,7 @@ android.permissions = android.permission.INTERNET, ACCESS_FINE_LOCATION, ACCESS_
 # (str) Full name including package path of the Java class that implements Python Service
 # use that parameter to set custom Java class which extends PythonService
 #android.service_class_name = org.kivy.android.PythonService
-
+android.service_class_name = org.kivy.android.PythonService
 # (str) Android app theme, default is ok for Kivy-based app
 # android.apptheme = "@android:style/Theme.NoTitleBar"
 

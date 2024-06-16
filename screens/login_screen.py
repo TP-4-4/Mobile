@@ -43,10 +43,10 @@ class LoginScreen(Screen):
             accepted_orders_count = Order.count_accepted_orders(db_session)
             if accepted_orders_count > 0:
                 if not self.map_builder.gps_started:
-                    self.map_builder.start_gps()
+                    self.map_builder.start_gps(user_id)
                 if not self.map_builder.gps_check_started:
-                    self.map_builder.start_gps_status_check()
-                    self.map_builder.start_gps()
+                    self.map_builder.start_gps_status_check(user_id)
+                    self.map_builder.start_gps(user_id)
 
             else:
                 self.map_builder.stop_gps()
