@@ -131,12 +131,12 @@ class MapBuilder:
 
         request_permissions(permissions_to_request, callback)
 
-    def start_gps(self, user_id):
+    def start_gps(self, courier_id):
         if not self.gps_started:
             try:
                 self.request_android_permissions()
-                gps.configure(on_location=lambda **kwargs: self.on_gps_location(user_id, **kwargs),
-                              on_status=lambda general, status, message: self.on_auth_status(general, message, user_id))
+                gps.configure(on_location=lambda **kwargs: self.on_gps_location(courier_id, **kwargs),
+                              on_status=lambda general, status, message: self.on_auth_status(general, message, courier_id))
 
                 gps.start(minTime=5000, minDistance=0)
                 print('gps started')
@@ -146,14 +146,14 @@ class MapBuilder:
             except NotImplementedError:
                 self.gps_status = 'No equipment'
 
-    def check_gps(self, user_id):
-        gps.configure(on_location=lambda **kwargs: self.on_gps_location(user_id, **kwargs),
-                      on_status=lambda general, status, message: self.on_auth_status(general, message, user_id))
+    def check_gps(self, courier_id):
+        gps.configure(on_location=lambda **kwargs: self.on_gps_location(courier_id, **kwargs),
+                      on_status=lambda general, status, message: self.on_auth_status(general, message, courier_id))
         gps.start(minTime=5000, minDistance=0)
 
-    def start_gps_status_check(self, user_id):
+    def start_gps_status_check(self, courier_id):
         if not self.gps_check_started:
-            self.check_stat = Clock.schedule_interval(lambda dt: self.check_gps_status(user_id), 2)
+            self.check_stat = Clock.schedule_interval(lambda dt: self.check_gps_status(courier_id), 2)
             self.gps_check_started = True
 
     def stop_gps(self):
@@ -164,7 +164,7 @@ class MapBuilder:
             print('gps stopped')
             self.stop_background_service()
 
-    def on_gps_location(self, user_id, **kwargs):
+    def on_gps_location(self, courier_id, **kwargs):
         self.gps_status = 'provider-enabled'
         latitude = kwargs['lat']
         longitude = kwargs['lon']
@@ -172,16 +172,16 @@ class MapBuilder:
         self.route_coordinate = [latitude, longitude]
         self.route_coordinate_updated = True
         #serialized_data = f"{latitude} {longitude}"
-        serialized_data = f"{user_id} {latitude} {longitude}"
+        serialized_data = f"{courier_id} {latitude} {longitude}"
         kafka_thread = threading.Thread(target=self.send_serialized_data_to_kafka, args=(serialized_data,))
         kafka_thread.start()
 
-    def on_auth_status(self, general_status, status_message, user_id):
+    def on_auth_status(self, general_status, status_message, courier_id):
         print('on_auth_status = ', general_status, status_message)
         if status_message == 'gps':
             self.gps_status = general_status
         if general_status == 'provider-disabled' and status_message == 'gps':
-            self.start_gps_status_check(user_id)
+            self.start_gps_status_check(courier_id)
 
     def open_gps_access_popup(self):
         window_width, window_height = Window.size
@@ -218,17 +218,17 @@ class MapBuilder:
     def reset_gps_popup(self, *args):
         self.gps_popup = None
 
-    def check_gps_status(self, user_id, *args):
+    def check_gps_status(self, courier_id, *args):
         status = self.gps_status
         print('status = ', status)
         if status == 'provider-disabled':
-            self.check_gps(user_id)
+            self.check_gps(courier_id)
             if self.gps_popup is None:
                 self.open_gps_access_popup()
         else:
             Clock.unschedule(self.check_stat)
             self.gps_check_started = False
-            self.check_gps(user_id)
+            self.check_gps(courier_id)
             if self.gps_popup:
                 self.gps_popup.dismiss()
 

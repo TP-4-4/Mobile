@@ -17,18 +17,18 @@ class StatusEnum(Enum):
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True)
-    order_number = Column(String)
-    address = Column(String)
-    total_amount = Column(Float)
+    total_cost = Column(Float)
     status = Column(EnumColumn(StatusEnum), default=StatusEnum.NOT_ACCEPTED)
+    courier_id = Column(Integer, ForeignKey('couriers.id'))
+    courier = relationship("Courier", back_populates="orders")
     user_id = Column(Integer, ForeignKey('users.id'))
     user = relationship("User", back_populates="orders")
     map = relationship("Map", back_populates="orders")
-    created_at = Column(DateTime, default=datetime.now)
+    created = Column(DateTime, default=datetime.now)
 
     @classmethod
-    def get_orders_by_user_id(cls, db: Session, user_id: int):
-        orders = db.query(cls).filter(cls.user_id == user_id).all()
+    def get_orders_by_courier_id(cls, db: Session, courier_id: int):
+        orders = db.query(cls).filter(cls.courier_id == courier_id).all()
         return orders
 
     @classmethod

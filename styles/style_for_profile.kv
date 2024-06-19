@@ -32,7 +32,7 @@
             orientation: 'vertical'
             size_hint: None, None
             size: dp(300), dp(300)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.42}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.55}
             spacing: dp(20)
 
             Label:
@@ -110,33 +110,6 @@
 
                 Label:
                     id: middle_name_label
-                    text: ''
-                    font_name: 'styles/Montserrat-SemiBold.ttf'
-                    font_size: '12sp'
-                    size_hint_x: 0.35
-                    color: 0, 0, 0, 0.6
-
-            Label:
-                text: 'Дата Рождения'
-                font_name: 'styles/Montserrat-SemiBold.ttf'
-                font_size: '12sp'
-                size_hint_x: 0.35
-                color: 0, 0, 0, 0.4
-
-
-            BoxLayout:
-                size_hint_y: None
-                height: dp(40)
-                padding: dp(20)
-                canvas.before:
-                    Color:
-                        rgba: 0.95, 0.95, 0.96, 1
-                    RoundedRectangle:
-                        size: self.size
-                        pos: self.pos
-
-                Label:
-                    id: birth_date_label
                     text: ''
                     font_name: 'styles/Montserrat-SemiBold.ttf'
                     font_size: '12sp'

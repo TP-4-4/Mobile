@@ -5,7 +5,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.image import Image as CoreImage
 
 from bd.database import SessionLocal
-from models.user import User  # Добавим импорт модели User
+from models.courier import Courier  # Добавим импорт модели courier
 
 class ProfileScreen(Screen):
     path_to_kv_file = './styles/style_for_profile.kv'
@@ -20,15 +20,15 @@ class ProfileScreen(Screen):
     # def on_pre_enter(self, *args):
     #     self.load_profile_data(App.get_running_app().db_session)
 
-    def load_profile_data(self, db_session, user_id):
-        #user_id = 1
-        user = User.get_user_info_by_id(db_session, user_id)  # Вот здесь вызывается метод из модели User
+    def load_profile_data(self, db_session, courier_id):
+        #courier_id = 1
+        courier = Courier.get_courier_info_by_id(db_session, courier_id)  # Вот здесь вызывается метод из модели courier
 
-        self.ids.last_name_label.text = str(user.last_name)
-        self.ids.first_name_label.text = str(user.first_name)
-        self.ids.middle_name_label.text = str(user.middle_name)
-        self.ids.birth_date_label.text = str(user.birth_date)
-        self.ids.phone_number_label.text = str(user.phone_number)
+        self.ids.last_name_label.text = str(courier.last_name)
+        self.ids.first_name_label.text = str(courier.first_name)
+        self.ids.middle_name_label.text = str(courier.middle_name)
+       # self.ids.birth_date_label.text = str(courier.birth_date)
+        self.ids.phone_number_label.text = str(courier.phone_number)
 
     def load_kv(self):
         with open(self.path_to_kv_file, 'r', encoding='utf-8') as kv_file:

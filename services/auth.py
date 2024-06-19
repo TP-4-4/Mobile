@@ -1,16 +1,16 @@
 import bcrypt
 from sqlalchemy.orm import Session
 
-from models.user import User
+from models.courier import Courier
 
 
-def authenticate_user(db: Session, phone_number: str, password: str):
-    user = User.get_user_by_phone_number(db, phone_number)
-    if not user:
+def authenticate_courier(db: Session, phone_number: str, password: str):
+    courier = Courier.get_courier_by_phone_number(db, phone_number)
+    if not courier:
         return None
-    if not verify_password(password, user.password.encode('utf-8')):
+    if not verify_password(password, courier.password.encode('utf-8')):
         return None
-    return user
+    return courier
 
 
 # Функция для проверки пароля

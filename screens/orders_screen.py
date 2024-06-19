@@ -6,6 +6,8 @@ from kivy.uix.screenmanager import Screen
 from kivymd.uix.button import MDIconButton
 
 from models.order import Order, StatusEnum
+from models.user import User
+
 
 class MyLabel(Label):
    def on_size(self, *args):
@@ -25,21 +27,25 @@ class OrdersScreen(Screen):
         super(OrdersScreen, self).__init__(**kwargs)
         self.load_kv()
 
-    def load_orders_data(self, db_session, user_id, map_builder):
-        orders = Order.get_orders_by_user_id(db_session, user_id)
+    def load_orders_data(self, db_session, courier_id, map_builder):
+        orders = Order.get_orders_by_courier_id(db_session, courier_id)
         orders_layout = self.ids.orders_layout
         orders_layout.clear_widgets()
+
 
         orders = sorted(orders, key=lambda x: (x.status != StatusEnum.ACCEPTED,
                                                x.status != StatusEnum.NOT_ACCEPTED,
                                                x.status != StatusEnum.CANCELED,
                                                x.status != StatusEnum.COMPLETED,
-                                               x.created_at))
+                                               x.created))
 
         for index, order in enumerate(orders):
-            order_number_label = MyLabel(text=str(order.order_number), font_size='18sp', text_size=(100, None), font_name='styles/Montserrat-ExtraBold.ttf',
+            order_number_label = MyLabel(text='ORD' + str(order.id), font_size='18sp', text_size=(100, None), font_name='styles/Montserrat-ExtraBold.ttf',
                                        color=(1, 0.478, 0, 1), halign='left', valign='middle')
-            address_label = MyLabel(text=str(order.address), font_size='12sp', text_size=(150, None), font_name='styles/Montserrat-Bold.ttf',
+
+            user = User.get_user_info_by_id(db_session, order.user_id)
+
+            address_label = MyLabel(text=str(user.address), font_size='12sp', text_size=(150, None), font_name='styles/Montserrat-Bold.ttf',
                                   color=(0, 0, 0, 0.6), halign='left', valign='middle')
 
             print('order.status == ', order.status)

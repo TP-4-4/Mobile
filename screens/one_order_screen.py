@@ -11,6 +11,8 @@ from kivymd.uix.button import MDFillRoundFlatButton
 
 from models.map import Map
 from models.order import Order, StatusEnum
+from models.user import User
+
 from kivy.graphics import RoundedRectangle
 
 from services.map import MapBuilder
@@ -52,18 +54,20 @@ class OneOrderScreen(Screen):
         order = Order.get_order_by_id(db_session, order_id)
         status = order.status if order else None
 
+        user = User.get_user_info_by_id(db_session, order.user_id)
+
         self.map_builder = map_builder
-        self.ids.order_number_label.text = str(order.order_number)
-        self.ids.address_label.text = str(order.address)
-        self.ids.total_amount_label.text = str(order.total_amount)
-        self.ids.name_client_label.text = 'Kate'
-        self.ids.phone_number_client_label.text = '89518579473'
+        self.ids.order_number_label.text = 'ORD' + str(order_id)
+        self.ids.address_label.text = str(user.address)
+        self.ids.total_amount_label.text = str(order.total_cost)
+        self.ids.name_client_label.text = user.first_name + ' ' + user.last_name
+        self.ids.phone_number_client_label.text = user.email
 
         self.back_button = MDFillRoundFlatButton(text='Назад', size_hint=(None, None),
                                                  font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                  md_bg_color=(1, 0.478, 0, 1),
                                                  pos_hint={'right': 0.95, 'top': 0.97},)
-        self.back_button.bind(on_release=lambda instance: self.switch_to_orders_screen(db_session, order.user_id))
+        self.back_button.bind(on_release=lambda instance: self.switch_to_orders_screen(db_session, order.courier_id))
         self.add_widget(self.back_button)
 
         if status == StatusEnum.COMPLETED:
@@ -79,27 +83,27 @@ class OneOrderScreen(Screen):
                                                        md_bg_color=(1, 0.478, 0, 1),
                                                        pos_hint={'center_x': 0.5, 'top': 0.2})
             self.accept_button.bind(
-                on_release=lambda instance: self.accept_order(db_session, order_id, self.accept_button, order.user_id))
+                on_release=lambda instance: self.accept_order(db_session, order_id, self.accept_button, order.courier_id))
             self.add_widget(self.accept_button)
 
         elif status == StatusEnum.ACCEPTED:
             self.show_additional_buttons(db_session, order_id)
 
-    def switch_to_orders_screen(self, db_session, user_id):
+    def switch_to_orders_screen(self, db_session, courier_id):
         orders_screen = self.manager.get_screen('orders_screen')
         if orders_screen:
             self.manager.current = 'orders_screen'
-            orders_screen.load_orders_data(db_session, user_id, self.map_builder)
+            orders_screen.load_orders_data(db_session, courier_id, self.map_builder)
 
-    def accept_order(self, db_session, order_id, accept_button, user_id):
+    def accept_order(self, db_session, order_id, accept_button, courier_id):
         Order.change_status(db_session, order_id, StatusEnum.ACCEPTED)
 
         accepted_orders_count = Order.count_accepted_orders(db_session)
         if accepted_orders_count > 0:
             if not self.map_builder.gps_started:
-                self.map_builder.start_gps(user_id)
+                self.map_builder.start_gps(courier_id)
             if not self.map_builder.gps_check_started:
-                self.map_builder.start_gps_status_check(user_id)
+                self.map_builder.start_gps_status_check(courier_id)
         else:
             self.map_builder.stop_gps()
 
@@ -120,19 +124,19 @@ class OneOrderScreen(Screen):
                                                        font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                        md_bg_color=(1, 0.478, 0, 1),
                                                        pos_hint={'center_x': 0.5, 'top': 0.15})
-            self.finish_button.bind(on_release=lambda instance: self.finish_order(db_session, order_id, order.user_id))
+            self.finish_button.bind(on_release=lambda instance: self.finish_order(db_session, order_id, order.courier_id))
 
             self.cancel_button = MDFillRoundFlatButton(text='Отменить', size_hint=(None, None),
                                                        font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                        md_bg_color=(1, 0.478, 0, 2),
                                                        pos_hint={'center_x': 0.3, 'top': 0.25})
-            self.cancel_button.bind(on_release=lambda instance: self.cancel_order(db_session, order_id, order.user_id))
+            self.cancel_button.bind(on_release=lambda instance: self.cancel_order(db_session, order_id, order.courier_id))
 
             self.add_widget(self.cancel_button)
             self.add_widget(self.map_button)
             self.add_widget(self.finish_button)
 
-    def cancel_order(self, db_session, order_id, user_id):
+    def cancel_order(self, db_session, order_id, courier_id):
         window_width, window_height = Window.size
 
         popup_width = window_width * 0.75
@@ -153,7 +157,7 @@ class OneOrderScreen(Screen):
         confirm_button = MDFillRoundFlatButton(text='Да', font_name='styles/Montserrat-ExtraBold.ttf',
                                                md_bg_color=(1, 0.478, 0, 1), size_hint_x=None)
         confirm_button.bind(
-            on_release=lambda instance: self.confirm_cancel_order(db_session, order_id, confirmation_popup, user_id))
+            on_release=lambda instance: self.confirm_cancel_order(db_session, order_id, confirmation_popup, courier_id))
 
         cancel_button = MDFillRoundFlatButton(text='Нет', font_name='styles/Montserrat-ExtraBold.ttf',
                                               md_bg_color=(1, 0.478, 0, 1))
@@ -173,16 +177,16 @@ class OneOrderScreen(Screen):
 
         confirmation_popup.open()
 
-    def confirm_cancel_order(self, db_session, order_id, popup, user_id):
+    def confirm_cancel_order(self, db_session, order_id, popup, courier_id):
         popup.dismiss()
         Order.change_status(db_session, order_id, StatusEnum.CANCELED)
 
         accepted_orders_count = Order.count_accepted_orders(db_session)
         if accepted_orders_count > 0:
             if not self.map_builder.gps_started:
-                self.map_builder.start_gps(user_id)
+                self.map_builder.start_gps(courier_id)
             if not self.map_builder.gps_check_started:
-                self.map_builder.start_gps_status_check(user_id)
+                self.map_builder.start_gps_status_check(courier_id)
         else:
             self.map_builder.stop_gps()
 
@@ -207,23 +211,23 @@ class OneOrderScreen(Screen):
 
         map_popup.open()
 
-    def confirm_finish_order(self, db_session, order_id, popup, user_id):
+    def confirm_finish_order(self, db_session, order_id, popup, courier_id):
         popup.dismiss()
         Order.change_status(db_session, order_id, StatusEnum.COMPLETED)
 
         accepted_orders_count = Order.count_accepted_orders(db_session)
         if accepted_orders_count > 0:
             if not self.map_builder.gps_started:
-                self.map_builder.start_gps(user_id)
+                self.map_builder.start_gps(courier_id)
             if not self.map_builder.gps_check_started:
-                self.map_builder.start_gps_status_check(user_id)
+                self.map_builder.start_gps_status_check(courier_id)
         else:
             self.map_builder.stop_gps()
 
         self.remove_buttons()
         self.ids.completed.text = 'Заказ Завершён'
 
-    def finish_order(self, db_session, order_id, user_id):
+    def finish_order(self, db_session, order_id, courier_id):
         window_width, window_height = Window.size
 
         popup_width = window_width * 0.75
@@ -244,7 +248,7 @@ class OneOrderScreen(Screen):
         confirm_button = MDFillRoundFlatButton(text='Да', font_name='styles/Montserrat-ExtraBold.ttf',
                                                md_bg_color=(1, 0.478, 0, 1), size_hint_x=None)
         confirm_button.bind(
-            on_release=lambda instance: self.confirm_finish_order(db_session, order_id, confirmation_popup, user_id))
+            on_release=lambda instance: self.confirm_finish_order(db_session, order_id, confirmation_popup, courier_id))
 
         cancel_button = MDFillRoundFlatButton(text='Нет', font_name='styles/Montserrat-ExtraBold.ttf',
                                               md_bg_color=(1, 0.478, 0, 1))
