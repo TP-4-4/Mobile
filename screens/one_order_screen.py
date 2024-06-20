@@ -32,6 +32,7 @@ class CustomButton(MDFillRoundFlatButton):
     def on_pos(self, instance, value):
         self.background.pos = value
 
+
 class OneOrderScreen(Screen):
     path_to_kv_file = './styles/style_for_one_order.kv'
     image = CoreImage('img/logo.png')
@@ -66,7 +67,7 @@ class OneOrderScreen(Screen):
         self.back_button = MDFillRoundFlatButton(text='Назад', size_hint=(None, None),
                                                  font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                  md_bg_color=(1, 0.478, 0, 1),
-                                                 pos_hint={'right': 0.95, 'top': 0.97},)
+                                                 pos_hint={'right': 0.95, 'top': 0.97}, )
         self.back_button.bind(on_release=lambda instance: self.switch_to_orders_screen(db_session, order.courier_id))
         self.add_widget(self.back_button)
 
@@ -83,7 +84,8 @@ class OneOrderScreen(Screen):
                                                        md_bg_color=(1, 0.478, 0, 1),
                                                        pos_hint={'center_x': 0.5, 'top': 0.2})
             self.accept_button.bind(
-                on_release=lambda instance: self.accept_order(db_session, order_id, self.accept_button, order.courier_id))
+                on_release=lambda instance: self.accept_order(db_session, order_id, self.accept_button,
+                                                              order.courier_id))
             self.add_widget(self.accept_button)
 
         elif status == StatusEnum.ACCEPTED:
@@ -112,7 +114,6 @@ class OneOrderScreen(Screen):
 
     def show_additional_buttons(self, db_session, order_id):
         order = Order.get_order_by_id(db_session, order_id)
-        print(order.status, 'dddd22')
         if order.status == StatusEnum.ACCEPTED:
             self.map_button = MDFillRoundFlatButton(text='Карта', size_hint=(None, None),
                                                     font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
@@ -124,13 +125,15 @@ class OneOrderScreen(Screen):
                                                        font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                        md_bg_color=(1, 0.478, 0, 1),
                                                        pos_hint={'center_x': 0.5, 'top': 0.15})
-            self.finish_button.bind(on_release=lambda instance: self.finish_order(db_session, order_id, order.courier_id))
+            self.finish_button.bind(
+                on_release=lambda instance: self.finish_order(db_session, order_id, order.courier_id))
 
             self.cancel_button = MDFillRoundFlatButton(text='Отменить', size_hint=(None, None),
                                                        font_name='styles/Montserrat-ExtraBold.ttf', font_size='12sp',
                                                        md_bg_color=(1, 0.478, 0, 2),
                                                        pos_hint={'center_x': 0.3, 'top': 0.25})
-            self.cancel_button.bind(on_release=lambda instance: self.cancel_order(db_session, order_id, order.courier_id))
+            self.cancel_button.bind(
+                on_release=lambda instance: self.cancel_order(db_session, order_id, order.courier_id))
 
             self.add_widget(self.cancel_button)
             self.add_widget(self.map_button)
@@ -169,7 +172,7 @@ class OneOrderScreen(Screen):
         cancel_layout = AnchorLayout(anchor_x='right', anchor_y='center')
         cancel_layout.add_widget(cancel_button)
 
-        buttons_layout = GridLayout(cols=2, padding=popup_width/10)
+        buttons_layout = GridLayout(cols=2, padding=popup_width / 10)
         buttons_layout.add_widget(confirm_layout)
         buttons_layout.add_widget(cancel_layout)
 
@@ -192,7 +195,6 @@ class OneOrderScreen(Screen):
 
         self.remove_buttons()
         self.ids.canceled.text = 'Заказ Отменён'
-
 
     def show_map(self, db_session, order_id):
         coord = Map.get_coord_by_id(db_session, order_id)
@@ -260,7 +262,7 @@ class OneOrderScreen(Screen):
         cancel_layout = AnchorLayout(anchor_x='right', anchor_y='center')
         cancel_layout.add_widget(cancel_button)
 
-        buttons_layout = GridLayout(cols=2, padding=popup_width/10)
+        buttons_layout = GridLayout(cols=2, padding=popup_width / 10)
         buttons_layout.add_widget(confirm_layout)
         buttons_layout.add_widget(cancel_layout)
 

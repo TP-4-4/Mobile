@@ -7,15 +7,6 @@ from services.auth import authenticate_courier
 from services.map import MapBuilder
 
 
-def validate_phone_number(phone_number):
-    pattern = re.compile(r'^(?:\+7|8)\d{10}$')
-
-    if pattern.match(phone_number):
-        return True
-    else:
-        return False
-
-
 class LoginScreen(Screen):
     path_to_kv_file = './styles/style_for_login.kv'
 
@@ -64,4 +55,3 @@ class LoginScreen(Screen):
             if self.ids.phone_number_field.text != '' or self.ids.password_field.text != '':
                 self.ids.error_label.text = "Неверный номер телефона или пароль"
                 print('Authentication failed. Invalid credentials.')
-

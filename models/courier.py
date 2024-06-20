@@ -23,27 +23,3 @@ class Courier(Base):
     @classmethod
     def get_courier_by_phone_number(cls, db: Session, phone_number: str):
         return db.query(cls).filter(cls.phone_number == phone_number).first()
-
-
-
-# # Создание соединения с базой данных
-# engine = create_engine('postgresql://postgres:1234@localhost/deliveryman')
-# Base.metadata.create_all(engine)
-#
-# # Создание сессии
-# Session = sessionmaker(bind=engine)
-# session = Session()
-#
-# # Пример использования сессии
-# courier = courier(last_name='Doe', first_name='John', middle_name='Smith', email='john@example.com', phone_number='1234567890', birth_date='2000-01-01')
-# session.add(courier)
-# session.commit()
-#
-# # Получение данных
-# couriers = session.query(courier).all()
-# for courier in couriers:
-#     print(courier.last_name, courier.first_name, courier.middle_name, courier.email, courier.phone_number, courier.birth_date)
-#
-# # Закрытие сессии
-# session.close()
-#

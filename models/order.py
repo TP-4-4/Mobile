@@ -14,6 +14,7 @@ class StatusEnum(Enum):
     CANCELED = 'canceled'
     COMPLETED = 'completed'
 
+
 class Order(Base):
     __tablename__ = 'orders'
     id = Column(Integer, primary_key=True)
@@ -50,4 +51,3 @@ class Order(Base):
     def count_accepted_orders(cls, db: Session):
         count = db.query(func.count(cls.id)).filter(cls.status == StatusEnum.ACCEPTED).scalar()
         return count
-

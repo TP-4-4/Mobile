@@ -52,19 +52,16 @@ class MyApp(MDApp):
         self.icon = 'img/icon.png'
 
     def on_pause(self):
-        # This method is called when the application is paused.
-        # Returning True indicates that the app can be paused.
         print("Application is pausing...")
         self.map_builder.start_background_service()
         return True
 
     def on_resume(self):
-        # This method is called when the application is resumed.
         print("Application is resuming...")
         self.map_builder.stop_background_service()
 
     def build(self):
-        self.root = WindowManager()  # Set WindowManager as the root
+        self.root = WindowManager()
         Window.fullscreen = 'auto'
 
         self.root.add_widget(OrdersScreen(name='orders_screen'))
@@ -82,22 +79,14 @@ class MyApp(MDApp):
             login_screen.submit_data(self.db_session, phone_number, password, self.map_builder)
 
 
-
-
 def encrypt_password(password):
-    # Генерация соли
     salt = bcrypt.gensalt()
-    # Хэширование пароля с использованием соли
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), salt)
     return hashed_password
 
 
 if __name__ == '__main__':
     clear_cache_folder()
-    password = '1'
-    encrypted_password = encrypt_password(password)
-    print("Зашифрованный пароль:", encrypted_password)
-    #  Зашифрованный пароль: b'$2b$12$6pVGF6spEu7C5JSOC56Bguf35EWNpAqiip6Z2wUH7ES3o3/hKfW66'
     app = MyApp()
     app.run()
 

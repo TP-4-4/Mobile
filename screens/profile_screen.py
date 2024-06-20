@@ -7,6 +7,7 @@ from kivy.core.image import Image as CoreImage
 from bd.database import SessionLocal
 from models.courier import Courier  # Добавим импорт модели courier
 
+
 class ProfileScreen(Screen):
     path_to_kv_file = './styles/style_for_profile.kv'
     image = CoreImage('img/logo.png')
@@ -17,17 +18,12 @@ class ProfileScreen(Screen):
         super(ProfileScreen, self).__init__(**kwargs)
         self.load_kv()
 
-    # def on_pre_enter(self, *args):
-    #     self.load_profile_data(App.get_running_app().db_session)
-
     def load_profile_data(self, db_session, courier_id):
-        #courier_id = 1
-        courier = Courier.get_courier_info_by_id(db_session, courier_id)  # Вот здесь вызывается метод из модели courier
+        courier = Courier.get_courier_info_by_id(db_session, courier_id)
 
         self.ids.last_name_label.text = str(courier.last_name)
         self.ids.first_name_label.text = str(courier.first_name)
         self.ids.middle_name_label.text = str(courier.middle_name)
-       # self.ids.birth_date_label.text = str(courier.birth_date)
         self.ids.phone_number_label.text = str(courier.phone_number)
 
     def load_kv(self):

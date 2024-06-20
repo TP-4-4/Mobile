@@ -10,7 +10,6 @@ with open('config_new.yaml', 'r') as config_file:
 config = config["database"]
 ssl_context = ssl._create_unverified_context()
 DATABASE_URL = f'postgresql+pg8000://{config["username"]}:{config["password"]}@{config["host"]}:{config["port"]}/{config["database"]}'
-#DATABASE_URL = f'postgresql+pg8000://{config["username"]}:{config["password"]}@{config["host"]}/{config["database"]}'
 engine = create_engine(DATABASE_URL, connect_args={"ssl_context": ssl_context})
 
 # Создаем фабрику сессий SQLAlchemy
