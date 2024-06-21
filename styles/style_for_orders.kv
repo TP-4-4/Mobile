@@ -1,0 +1,46 @@
+<OrdersScreen>:
+    FloatLayout:
+        MDIcon:
+            icon: 'img/logo.png'
+            size_hint: None, None
+            size: dp(app.width/5), dp(app.height/5)
+            pos_hint: {'left': 1, 'top': 1}
+
+        MDFillRoundFlatButton:
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Профиль'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '12sp'
+            size_hint: None, None
+            height: dp(36)
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'right': 0.95, 'top': 0.97}
+            on_release: app.root.current = 'profile_screen'
+
+        Label:
+            text: 'Заказы'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '20sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.92}
+            color: 1, 0.478, 0, 1
+
+        ScrollView:
+            pos_hint: {'center_x': 0.5, 'top': 0.8}
+            GridLayout:
+                id: orders_layout
+                cols: 3
+                size_hint_y: None
+                padding: dp(10)
+                spacing: dp(20)  # расстояние между заказами
+
+
+
+
+
+
+
+

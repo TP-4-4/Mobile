@@ -1,0 +1,13 @@
+database:
+  database: purrfectbitesdb
+  username: k8lobova
+  password: ...
+  host: rc1b-5o05n7l3388upa0u.mdb.yandexcloud.net
+  port: 6432
+  sslmode: verify-full
+  target_session_attrs: read-write
+
+api:
+  key: ...
+
+

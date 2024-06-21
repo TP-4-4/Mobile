@@ -1,0 +1,159 @@
+<ProfileScreen>:
+    FloatLayout:
+
+        MDIcon:
+            icon: 'img/logo.png'
+            size_hint: None, None
+            size: dp(app.width/5), dp(app.height/5)
+            pos_hint: {'left': 1, 'top': 1}
+
+        MDFillRoundFlatButton:
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Заказы'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            size_hint: None, None
+            font_size: '12sp'
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'right': 0.95, 'top': 0.97}
+            on_release: app.root.current = 'orders_screen'
+
+        Label:
+            text: 'Личныe данные'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '20sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.92}
+            color: 1, 0.478, 0, 1
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: dp(300), dp(300)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.55}
+            spacing: dp(20)
+
+            Label:
+                text: 'Фамилия'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.2
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: last_name_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    color: 0, 0, 0, 0.6
+
+
+            Label:
+                text: 'Имя'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.1
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: first_name_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+            Label:
+                text: 'Отчество'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.20
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: middle_name_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+            Label:
+                text: 'Номер телефона'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.36
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: phone_number_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+        MDFillRoundFlatButton:
+            canvas.before:
+                RoundedRectangle:
+                    pos: self.pos
+                    size: self.size
+            text: 'Выйти'
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            size_hint: None, None
+            font_size: '12sp'
+            md_bg_color: (1, 0.478, 0, 1)
+            pos_hint: {'center_x': 0.5, 'y': 0.05}
+            on_release: app.root.current = 'login_screen'
+
+

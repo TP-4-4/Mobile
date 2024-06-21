@@ -1,0 +1,150 @@
+<OneOrderScreen>:
+    FloatLayout:
+        MDIcon:
+            icon: 'img/logo.png'
+            size_hint: None, None
+            size: dp(app.width/5), dp(app.height/5)
+            pos_hint: {'left': 1, 'top': 1}
+
+        Label:
+            id: order_number_label
+            text: ''
+            font_name: 'styles/Montserrat-ExtraBold.ttf'
+            font_size: '20sp'
+            size_hint: None, None
+            pos_hint: {'center_x': 0.5, 'top': 0.92}
+            color: 1, 0.478, 0, 1
+
+
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint: None, None
+            size: dp(300), dp(300)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.55}
+            spacing: dp(20)
+
+            Label:
+                text: 'Имя'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.10
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: name_client_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    color: 0, 0, 0, 0.6
+
+            Label:
+                text: 'Email'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.12
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: phone_number_client_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+            Label:
+                text: 'Адрес'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.15
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: address_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+            Label:
+                text: 'Сумма'
+                font_name: 'styles/Montserrat-SemiBold.ttf'
+                font_size: '12sp'
+                size_hint_x: 0.15
+                color: 0, 0, 0, 0.4
+
+
+            BoxLayout:
+                size_hint_y: None
+                height: dp(40)
+                padding: dp(20)
+                canvas.before:
+                    Color:
+                        rgba: 0.95, 0.95, 0.96, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+
+                Label:
+                    id: total_amount_label
+                    text: ''
+                    font_name: 'styles/Montserrat-SemiBold.ttf'
+                    font_size: '12sp'
+                    size_hint_x: 0.35
+                    color: 0, 0, 0, 0.6
+
+
+        Label:
+            id: completed
+            text: ''
+            size_hint: None, None
+            font_name: 'styles/Montserrat-SemiBold.ttf'
+            font_size: '12sp'
+            pos_hint: {'center_x': 0.5, 'top': 0.3}
+            color: 0, 0, 0, 0.6
+
+        Label:
+            id: canceled
+            text: ''
+            size_hint: None, None
+            font_name: 'styles/Montserrat-SemiBold.ttf'
+            font_size: '12sp'
+            pos_hint: {'center_x': 0.5, 'top': 0.3}
+            color: 0, 0, 0, 0.6
